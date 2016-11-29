@@ -1,4 +1,4 @@
-# utils_2.3.1
+# utils_2.3.2
 
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) reading, etc.
 
