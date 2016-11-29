@@ -1,6 +1,6 @@
 # utils_2.3.1
 
-The **utils** package is a centralised location for commonly used utilities; such as database connections, JSON (config file) reading, etc.
+The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) reading, etc.
 
 
 ####LINUX INSTALLATION:  
