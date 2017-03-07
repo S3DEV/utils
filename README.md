@@ -26,6 +26,6 @@ or
 
 ####TROUBLESHOOTING
 If the Linux installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This will ignore the dependencies, and allow you to install them yourself, if you require them.  
-`$ sudo pip install git+https://github.com/73rdStreetDev/utils_2.3.2/ --no-deps`  
+`$ sudo pip install git+https://github.com/s3dev/utils_2.3.2/ --no-deps`  
 
 -----
