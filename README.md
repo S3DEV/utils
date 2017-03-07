@@ -4,14 +4,14 @@ The **utils** package is a centralised location for commonly used utilities; suc
 
 
 ####LINUX INSTALLATION  
-`$ sudo pip install git+https://github.com/73rdStreetDev/utils_2.3.2/`  
+`$ sudo pip install git+https://github.com/s3dev/utils_2.3.2/`  
 or  
 `$ sudo python <path>/utils/setup.py install`  
 
 -----  
 
 ####WINDOWS INSTALLATION  
-`> pip install git+https://github.com/73rdStreetDev/utils_2.3.2/`  
+`> pip install git+https://github.com/s3dev/utils_2.3.2/`  
 or  
 `> python <path>\utils\setup.py install`  
 
