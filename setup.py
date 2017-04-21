@@ -14,7 +14,8 @@ params = dict(  prog='utils',
                 url='https://73rdstreetdevelopment.wordpress.com',
                 license='MIT',
                 packages=find_packages(),
-                install_requires=['palettable', 'numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc']
+                install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc'],
+                data_files=[('', ['README.html', 'README.md', 'LICENSE'])]
                 )
                 
 #SETUP PARAMETERS
@@ -29,5 +30,6 @@ setup(name=params['prog'],
       url=params['url'],
       license=params['license'],
       packages=params['packages'],
-      install_requires=params['install_requires']
+      install_requires=params['install_requires'],
+      data_files=params['data_files']
       )
