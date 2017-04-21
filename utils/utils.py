@@ -79,8 +79,8 @@ Date        Programmer      Version     Update
                                         ----------------------------------
                                         CODE OVERHAUL AND STANDARDISATION:
                                         ----------------------------------
-                                        Revised all docstrings to <= 80 columns. (Aside from this
-                                        header).
+                                        Revised all code and docstrings to conform to the PEP-8
+                                        line wrap standard. (Aside from this header).
                                         Updated the format_exif_date() function to use datetime
                                         rather than the s.replace() function.
                                         REMOVED METHODS:
@@ -90,12 +90,14 @@ Date        Programmer      Version     Update
                                         - colours_addRGB()
                                         - colours_addRGBA()
                                         RENAMED METHODS:
-                                        - All methods / functions have been renamed to meet the
-                                        standard python method/function naming convention.
+                                        - All methods/functions and parameters have
+                                        been renamed to use all lower case, per PEP-8.
                                         - However, the original method/function names still exist,
-                                        but warning messages have been added advising  source
+                                        but warning messages have been added advising source
                                         updates.
+
                                         TODO: ADD COLORMAP PREVIEW
+
 ------------------------------------------------------------------------------------------------'''
 
 #------------------------------------------------------------------------------
@@ -120,11 +122,12 @@ def getcolormap(colormap='Blues', n=1, dtype='hex', preview=False):
 
     '''
     DESIGN:
-    Function designed to return a list of colour values from a matplotlib
-    colormap.  The number of returned color values can range from 1 to 256.
+    Function designed to return a list of colour values from a
+    matplotlib colormap.  The number of returned color values can
+    range from 1 to 256.
 
-    This is useful when creating a graph which requires gradient colour map.
-    (e.g.: a plotly bar chart)
+    This is useful when creating a graph which requires gradient
+    colour map. (e.g.: a plotly bar chart)
 
     To list matplotlib color maps:
     > from matplotlib.pyplot import colormaps
@@ -138,15 +141,16 @@ def getcolormap(colormap='Blues', n=1, dtype='hex', preview=False):
         - dtype (default='hex')
         data type to return
         - preview (default=False)
-          this option creates a plotly or matplotlib graph displaying the
-          colormap.
+          this option creates a plotly or matplotlib graph displaying
+          the colormap.
 
     DEPENDENCIES:
     - matplotlib
 
     USE:
     > import utils.utils as u
-    > cmap = u.getcolourmap(cmap='spring', n=50, dtype='hex'[, preview=True])
+    > cmap = u.getcolourmap(cmap='spring',
+                            n=50, dtype='hex'[, preview=True])
     '''
 
     from matplotlib import cm
@@ -181,7 +185,8 @@ def format_exif_date(datestring):
     '''
     DESIGN:
     Function designed to convert the exif date/timestamp
-    from 2010:01:31 12:31:18 format to 20100131123118 format for easy sorting.
+    from 2010:01:31 12:31:18 format to 20100131123118 format for easy
+    sorting.
 
     This is useful for storing an exif date as a datetime string.
 
@@ -217,12 +222,14 @@ def dbconn_oracle(host=None, userid=None, password=None):
 
     '''
     DESIGN:
-    Function designed to create a connection to an Oracle database using
-    the provided login details.  If a login detail is not provided, the user
-    is prompted.  This can be used as a security feature,
+    Function designed to create a connection to an Oracle database
+    using the provided login details.  If a login detail is not
+    provided, the user is prompted.
+    This can be used as a security feature,
 
-    The connection is tested.  If successful, the connection and cursor objects
-    are returned to the calling program, via a dictionary.
+    The connection is tested.  If successful, the connection and
+    cursor objects are returned to the calling program, as a
+    dictionary.
 
     conn = [the connection object]
     cur  = [the cursor object]
@@ -267,7 +274,8 @@ def dbconn_oracle(host=None, userid=None, password=None):
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('the database connection failed for (host: %s, userid: %s, pw: %s)' % (host, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
+        raise ValueError('the database connection failed for (host: %s, userid: %s, pw: %s)' \
+                         % (host, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
 
         #STORE NULL RESULT
         output = None
@@ -282,20 +290,23 @@ def getdrivername(drivername, returnall=False):
 
     '''
     DESIGN:
-    Helper function designed to get and return the name of an ODBC driver.
+    Helper function designed to get and return the name of an ODBC
+    driver.
 
-    The argument can be formatted as a regex expression.  If multiple drivers
-    are found, by default, only the first driver in the list is returned.
+    The argument can be formatted as a regex expression.  If multiple
+    drivers are found, by default, only the first driver in the list is
+    returned.
     However, the returnall parameter toggles this action.
 
-    This function has a dependency on pyodbc. Therefore, the utils.testimport()
-    function is called before pyodbc it is imported. If the pyodbc library is
-    not installed, the user is notified.
+    This function has a dependency on pyodbc. Therefore,
+    the utils.testimport() function is called before pyodbc it is
+    imported. If the pyodbc library is not installed, the user is
+    notified.
 
     PARAMETERS:
         - drivername
-          the name of the driver you're looking for. should be formatted as
-          regex.
+          the name of the driver you're looking for. should be
+          formatted as regex.
         - returnall (default=False)
           return all drivers found.
 
@@ -330,12 +341,12 @@ def testimport(module_name):
 
     '''
     DESIGN:
-    This is a small helper function designed to test if a module/library is
-    installed before trying to import it.
+    This is a small helper function designed to test if a
+    module/library is installed before trying to import it.
 
     This can be useful when a method requires an 'obscure' library, and
-    importing on a deployment environment where the library is not installed,
-    could have adverse effects.
+    importing on a deployment environment where the library is not
+    installed, could have adverse effects.
 
     If the library is not intalled, the user is notified.
 
@@ -371,12 +382,13 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
 
     '''
     DESIGN:
-    Function designed to create a connection to a SQL Server database using
-    the provided login parameters.  If a login detail is not provided, the user
-    is prompted.  This can be used as a security feature,
+    Function designed to create a connection to a SQL Server database
+    using the provided login parameters.  If a login detail is not
+    provided, the user is prompted.
+    This can be used as a security feature,
 
     The connection is tested.  If successful, the connection and cursor
-    objects are returned to the calling program, via a dictionary.
+    objects are returned to the calling program, as a dictionary.
 
     conn = [the connection object]
     cur  = [the cursor object]
@@ -431,7 +443,8 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('the database connection failed for (server: %s, userid: %s, pw: %s)' % (server, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
+        raise ValueError('the database connection failed for (server: %s, userid: %s, pw: %s)' \
+                         % (server, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
 
         #STORE NULL RESULT
         output = None
@@ -482,11 +495,11 @@ def fileexists(filepath):
 
     '''
     DESIGN:
-    Function designed check if a file exists.  A boolean value is returned to
-    the calling program.
+    Function designed check if a file exists.  A boolean value is
+    returned to the calling program.
 
-    This function expands in the standard os.path.isfile() function in that
-    the user is automatically notified if the path does not exist.
+    This function expands in the standard os.path.isfile() function in
+    that the user is automatically notified if the path does not exist.
 
     PARAMETERS:
         - filepath
@@ -497,7 +510,7 @@ def fileexists(filepath):
 
     USE:
     > import util.utils as u
-    > if u.fileexists(filepath=/path/to/file.ext): do stuff ...
+    > if u.fileexists(filepath='/path/to/file.ext'): do stuff ...
     '''
 
     import os
@@ -525,13 +538,14 @@ def direxists(path, create_path=True):
 
     '''
     DESIGN:
-    Function designed to test if a directory path exists.  If the path does not
-    exist, the path can be created; determined by passed the value of
-    create_path(boolean).
+    Function designed to test if a directory path exists.  If the path
+    does not exist, the path can be created; determined by passed the
+    value of create_path(boolean).
 
-    This function expands in the standard os.path.exists() function in that
-    the path can be created, if it doesn't already exist, by passing the
-    create_path parameter.
+    This function expands in the standard os.path.exists() function in
+    that the path can be created, if it doesn't already exist, by
+    passing the create_path parameter as True; which is the default
+    action.
 
     PARAMETERS:
         - path
@@ -634,7 +648,8 @@ def json_write(dictionary, filepath='c:/temp/tempfile.json'):
 
     USE:
     > import utils.utils as u
-    > u.json_write(dictionary=mypy_dict[, filepath='/path/to/output.json'])
+    > u.json_write(dictionary=mypy_dict[,
+                   filepath='/path/to/output.json'])
     '''
 
     import json
@@ -650,10 +665,11 @@ def unidecode(string):
 
     '''
     DESIGN:
-    Method designed test a passed string for being a unicode type, then return
-    a decoded string value.
+    Method designed test a passed string for being a unicode type,
+    then return a decoded string value.
 
-    If the passed string is not unicode, the original value is returned.
+    If the passed string is not unicode, the original value is
+    returned.
 
     PARAMETERS:
         - string
@@ -705,15 +721,15 @@ def CleanDF(dfData):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     ACTION:
     Revise your source code to use the 'utils.clean_df()' function.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the clean_df() function; but
-    remember to update your source.
+    In the mean-time, I'll pass your request to the clean_df()
+    function; but remember to update your source.
     '''
 
     print CleanDF.__doc__
@@ -729,15 +745,15 @@ def DirExists(FilePath, CreatePath=True):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     ACTION:
     Revise your source code to use the 'utils.direxists()' function.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the direxists() function; but
-    remember to update your source.
+    In the mean-time, I'll pass your request to the direxists()
+    function; but remember to update your source.
     '''
 
     print DirExists.__doc__
@@ -753,15 +769,15 @@ def FileExists(FilePath):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     ACTION:
     Revise your source code to use the 'utils.fileexists()' function.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the fileexists() function; but
-    remember to update your source.
+    In the mean-time, I'll pass your request to the fileexists()
+    function; but remember to update your source.
     '''
 
     print FileExists.__doc__
@@ -777,21 +793,22 @@ def GetColourMap(Map='Blues', N=1, DType='HEX'):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
-    - The spelling of GetColourMap has changed to drop the 'u' for standardised
-      spelling.
+    - The spelling of GetColourMap has changed to drop the 'u' for
+      standardised spelling.
     - The Map parameter has changed to colormap.
 
     ACTION:
     Revise your source code to use the 'utils.getcolormap()' function.
-    Also, note the change in name and/or case for the passed parameters.
+    Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the getcolormap() function; but
-    remember to update your source.
+    In the mean-time, I'll pass your request to the getcolormap()
+    function; but remember to update your source.
     '''
 
     print GetColourMap.__doc__
@@ -824,8 +841,8 @@ def GetDriverName(re_DriverName):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed to lower case.
@@ -833,12 +850,13 @@ def GetDriverName(re_DriverName):
     - A returnall parameter has been added.
 
     ACTION:
-    Revise your source code to use the 'utils.getdrivername()' function.
-    Also, note the change in name and/or case for the passed parameters.
+    Revise your source code to use the 'utils.getdrivername()'
+    function. Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the getdrivername() function;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the getdrivername()
+    function; but remember to update your source.
     '''
 
     print GetDriverName.__doc__
@@ -853,19 +871,20 @@ def Unidecode(string):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed to lower case.
 
     ACTION:
     Revise your source code to use the 'utils.unidecode()' function.
-    Also, note the change in name and/or case for the passed parameters.
+    Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the unidecode() function;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the unidecode()
+    function; but remember to update your source.
     '''
 
     print Unidecode.__doc__
@@ -885,7 +904,7 @@ def colours_addRGB(colorset=None, category=None, count=None):
     longer accessible.
 
     RECOMMENDED ALTERNATIVE(S):
-    - utils.getcolormap() (s3dev utils method; using matplotlib colormaps)
+    - utils.getcolormap()  -  (contained in this module)
     '''
 
     print colours_addRGB.__doc__
@@ -916,20 +935,21 @@ def jsonRead(FilePath):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed format and to lower case.
     - The parameter(s) has changed case.
 
     ACTION:
-    Revise your source code to use the 'utils.json_read()' function.  Also,
-    note the change in name and/or case for the passed parameters.
+    Revise your source code to use the 'utils.json_read()' function.
+    Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the json_read() function;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the json_read()
+    function; but remember to update your source.
     '''
 
     print jsonRead.__doc__
@@ -944,20 +964,21 @@ def jsonWrite(Dictionary, FilePath='c:/temp/tempfile.json'):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed format and to lower case.
     - The parameter(s) has changed case.
 
     ACTION:
-    Revise your source code to use the 'utils.json_write()' method.  Also, note
-    the change in name and/or case for the passed parameters.
+    Revise your source code to use the 'utils.json_write()' method.
+    Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the json_write() method;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the json_write()
+    method; but remember to update your source.
     '''
 
     print jsonWrite.__doc__
@@ -974,16 +995,17 @@ def format_exifDate(value):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed format and to lower case.
     - The parameter name has changed to datestring.
 
     ACTION:
-    Revise your source code to use the 'utils.format_exif_date()' function.
-    Also, note the change in name and/or case for the passed parameters.
+    Revise your source code to use the 'utils.format_exif_date()'
+    function. Also, note the change in name and/or case for the passed
+    parameters.
 
     FALLBACK:
     In the mean-time, I'll pass your request to the format_exif_date()
@@ -1002,18 +1024,19 @@ def dbConn_Oracle(host=None, userid=None, password=None):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed to lower case.
 
     ACTION:
-    Revise your source code to use the 'utils.dbconn_oracle()' function.
+    Revise your source code to use the 'utils.dbconn_oracle()'
+    function.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the dbconn_oracle() function;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the dbconn_oracle()
+    function; but remember to update your source.
     '''
 
     print dbConn_Oracle.__doc__
@@ -1028,8 +1051,8 @@ def dbConn_SQL(server=None, database=None, userid=None, password=None):
 
     '''
     WARNING:
-    This function has been depreciated and is no longer in use as of utils
-    v3.0.0.
+    This function has been depreciated and is no longer in use as of
+    utils v3.0.0.
 
     NOTABLE CHANGES:
     - The method name has changed to lower case.
@@ -1038,8 +1061,8 @@ def dbConn_SQL(server=None, database=None, userid=None, password=None):
     Revise your source code to use the 'utils.dbconn_sql()' function.
 
     FALLBACK:
-    In the mean-time, I'll pass your request to the dbconn_sql() function;
-    but remember to update your source.
+    In the mean-time, I'll pass your request to the dbconn_sql()
+    function; but remember to update your source.
     '''
 
     print dbConn_SQL.__doc__
