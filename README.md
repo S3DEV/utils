@@ -15,7 +15,7 @@ Any of the following options will get you there ...
 
 - **Local / Remote Git Repo**
 ```bash
-> sudo pip install git+file://<repo/location>/utils_3.x.x/
+> sudo pip install git+file:///<repo/location>/utils_3.x.x/
 ```
 
 - **Python Setup File**
@@ -35,7 +35,7 @@ Any of the following options will get you there ...
 
 - **Local / Remote Git Repo**
 ```bash
-> pip install git+file://<repo/location>/utils_3.x.x/
+> pip install git+file:///<repo/location>/utils_3.x.x/
 ```
 
 - **Python Setup File**
