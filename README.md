@@ -1,5 +1,5 @@
 
-# utils_3.0.0
+# utils_3.0.1
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) reading, etc.
 
@@ -10,12 +10,12 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.0.0/
+> sudo pip install git+https://github.com/s3dev/utils_3.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> sudo pip install git+file://<repo/location>/utils_3.0.0/
+> sudo pip install git+file://<repo/location>/utils_3.x.x/
 ```
 
 - **Python Setup File**
@@ -30,12 +30,12 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> pip install git+https://github.com/s3dev/utils_3.0.0/
+> pip install git+https://github.com/s3dev/utils_3.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> pip install git+file://<repo/location>/utils_3.0.0/
+> pip install git+file://<repo/location>/utils_3.x.x/
 ```
 
 - **Python Setup File**
@@ -50,7 +50,7 @@ To upgrade a current installation to the latest version, use an install command 
 For example:
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.0.0/ --upgrade
+> sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --upgrade
 ```
 
 
@@ -67,5 +67,5 @@ For example:
 If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This will ignore the dependencies, and allow you to install each one yourself, *if* you require them.  
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.0.0/ --no-deps
+> sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --no-deps
 ```
