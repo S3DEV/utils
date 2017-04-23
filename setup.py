@@ -6,7 +6,7 @@ exec(open('utils/_version.py').read())
 
 #SETUP CONSTANTS
 PACKAGE = 'utils'
-INST_ROOT = '/lib/site-packages/' + PACKAGE
+INST_ROOT = './lib/site-packages/' + PACKAGE
 
 #DEFINE PARAMETERS (LIST PROGRAM DEPENDENCIES IN INSTALL_REQUIRES PARAMETER)
 params = dict(  prog=PACKAGE, 
