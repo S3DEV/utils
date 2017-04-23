@@ -4,8 +4,12 @@ from setuptools import setup, find_packages
 #GET THE VERSION FILE
 exec(open('utils/_version.py').read())
 
+#SETUP CONSTANTS
+PACKAGE = 'utils'
+INST_ROOT = 'c:/anaconda2/lib/site-packages/' + PACKAGE
+
 #DEFINE PARAMETERS (LIST PROGRAM DEPENDENCIES IN INSTALL_REQUIRES PARAMETER)
-params = dict(  prog='utils', 
+params = dict(  prog=PACKAGE, 
                 version=__version__,
                 platforms='Python 2.7', 
                 description='Bespoke general utilities package for Python 2.7', 
@@ -14,8 +18,8 @@ params = dict(  prog='utils',
                 url='https://73rdstreetdevelopment.wordpress.com',
                 license='MIT',
                 packages=find_packages(),
-                install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc'],
-                data_files=[('', ['README.html', 'README.md', 'LICENSE'])]
+                install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly'],
+                data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE'])]
                 )
                 
 #SETUP PARAMETERS
