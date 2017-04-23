@@ -12,6 +12,7 @@ Dependents: _version
             matplotlib
             numpy
             os
+            plotly
             pyodbc
             re
             unidecode
@@ -79,33 +80,31 @@ Date        Programmer      Version     Update
                                         ----------------------------------
                                         CODE OVERHAUL AND STANDARDISATION:
                                         ----------------------------------
-                                        Revised all code and docstrings to conform to the PEP-8
+                                        - Revised all code and docstrings to conform to the PEP-8
                                         line wrap standard. (Aside from this header).
-                                        Updated the format_exif_date() function to use datetime
+                                        - Updated the format_exif_date() function to use datetime
                                         rather than the s.replace() function.
+                                        - Added feature to getcolormap() which provides a preview
+                                        for the chosen color map.
                                         REMOVED METHODS:
                                         - ArgvParse()
-                                            - Unused.  To be replaced by std argparse.
                                         - GetConfig()
                                         - colours_addRGB()
                                         - colours_addRGBA()
                                         RENAMED METHODS:
                                         - All methods/functions and parameters have
                                         been renamed to use all lower case, per PEP-8.
-                                        - However, the original method/function names still exist,
-                                        but warning messages have been added advising source
-                                        updates.
-
-                                        TODO: ADD COLORMAP PREVIEW
-
+                                            - Original method/function names still exist,
+                                            but warning messages have been added advising source
+                                            updates.
 ------------------------------------------------------------------------------------------------'''
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #SET VERSION NUMBER
 from _version import __version__
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #METHOD USED FOR DEPLOYMENT TESTING
 def __test():
 
@@ -116,9 +115,9 @@ def __test():
     print 'This is only a test.'
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION RETURNS A LIST OF CONVERTED VALUES FROM A MATPLOTLIB COLORMAP
-def getcolormap(colormap='Blues', n=1, dtype='hex', preview=False):
+def getcolormap(colormap='Blues', n=5, dtype='hex', preview=False, preview_in='mpl'):
 
     '''
     DESIGN:
@@ -135,22 +134,29 @@ def getcolormap(colormap='Blues', n=1, dtype='hex', preview=False):
 
     PARAMETERS:
         - colormap (default='Blues')
-        name of the matplotlib color map
+          name of the matplotlib color map
         - n  (default=1)
-        number of colors to return
+          number of colors to return
         - dtype (default='hex')
-        data type to return
+          data type to return
         - preview (default=False)
           this option creates a plotly or matplotlib graph displaying
           the colormap.
+        - preview_in (default='mpl')
+          display method for previewing the graph.
+          'mpl' = matplotlib (used for inline preview)
+          'plotly' = plotly (use for html display in a web browser)
 
     DEPENDENCIES:
     - matplotlib
 
     USE:
     > import utils.utils as u
-    > cmap = u.getcolourmap(cmap='spring',
-                            n=50, dtype='hex'[, preview=True])
+    > cmap = u.getcolourmap(colormap='winter',
+                            n=50,
+                            dtype='hex',
+                            preview=True,
+                            preview_in='plotly')
     '''
 
     from matplotlib import cm
@@ -159,24 +165,128 @@ def getcolormap(colormap='Blues', n=1, dtype='hex', preview=False):
     #CREATE A COLOR MAP OBJECT (MAP, NUMBER OF VALUES)
     cmap = cm.get_cmap(colormap, n)
 
-    #TODO: ADD COLOURMAP PREVIEW (PLOTLY)
-    #TODO: ADD COLOURMAP PREVIEW (MATPLOTLIB)
-
-    #TEST FOT PREVIEW OPTION
-    if preview:
-        #PREVIEW THE COLOUR MAP
-        print 'previewing colormap ...'
-        print 'COMING SOON!'
-
-    #TEST FOR DTYPE >> COMPILE
+    #CONVERT COLORMAP OBJECT INTO LIST OF COLORS
     if dtype.lower() == 'hex':
         #RETURN A LIST OF RGB2HEX CONVERTED COLORS
-        return [rgb2hex(cmap(i)[:3]) for i in range(cmap.N)]
+        colors = [rgb2hex(cmap(i)[:3]) for i in range(cmap.N)]
     else:
-        return None
+        colors = None
+
+    #TEST FOR PREVIEW:
+    if colors is not None and preview:
+        #MATPLOTLIB
+        if preview_in == 'mpl': __prev_mpl(cmap=colors, cmap_name=colormap)
+        #PLOTLY
+        if preview_in == 'plotly': __prev_plotly(cmap=colors, cmap_name=colormap)
+
+    return colors
+
+
+#-----------------------------------------------------------------------
+#HELPFER METHOD USED TO PREVIEW A COLOUR MAP USING MATPLOTLIB
+def __prev_mpl(cmap, cmap_name):
+
+    '''
+    DESIGN:
+    This method is designed to be called form the getcolormap()
+    function, as a means of displaying / previewing the colour map
+    chosen, using the matplotlib plotting library.
+
+    ADVANTAGE:
+    This method displays the colour map preview directly within the
+    [Sypder] IDE, Jupyter Notebook.
+
+    PARAMETERS:
+    - cmap
+      The colour map you want to preview.  This must be a python list of
+      rgb/rgba/hex values.
+    - cmap_name
+      The name of the matplotlib colour map.  (e.g.: OrRd, winter, etc.)
+      This name is only used to display the colour map name in the
+      graph title.
+
+    DEPENDENCIES:
+    - matplotlib
+    '''
+
+    import matplotlib.pyplot as plt
+
+    #CREATE GRAPH DATA
+    n = len(cmap)
+    x = range(0, n)
+    y = [10]*n
+
+    #CREATE IMAGE
+    plt.figure(facecolor='black')
+    plt.bar(x, y, width=15, linewidth=0, color=cmap)
+    plt.title('COLOUR MAP NAME: %s' % cmap_name, color='w', size=12)
+    plt.xlim(0, n)
+    plt.ylim(0, 10)
+    plt.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off')
+    plt.xticks(color='w', size=12)
+    #TURN OFF BORDER
+    for spine in plt.gca().spines.values(): spine.set_visible(False)
+    #DISPLAY GRAPH
+    plt.show()
 
 
 #------------------------------------------------------------------------------
+#COLOUR MAP (BAR GRAPH) PREVIEW USING PLOTLY
+def __prev_plotly(cmap, cmap_name, out_file='c:/temp/cmap_graph.html'):
+
+    '''
+    DESIGN:
+    This method is designed to be called form the getcolormap()
+    function, as a means of displaying / previewing the colour map
+    chosen, using the plotly library.
+
+    ADVANTAGE:
+    This method displays the hex/rgb/rgba colour code value for each
+    bar as hovertext.
+
+    PARAMETERS:
+    - cmap
+      The colour map you want to preview.  This must be a python list of
+      rgb/rgba/hex values.
+    - cmap_name
+      The name of the matplotlib colour map.  (e.g.: OrRd, winter, etc.)
+      This name is only used to display the colour map name in the
+      graph title.
+    - out_file (default='c:/temp/cmap_graph.html')
+      File path/name for the html graph output; if you wish to save
+      the file.
+
+    DEPENDENCIES:
+    - plotly >= 2.0.6
+    '''
+
+    #TEST IF PLOTLY HAS BEEN INSTALLED
+    if testimport('plotly'):
+
+        from plotly.offline import plot
+        import plotly.graph_objs as go
+
+        #CREATE GRAPH DATA
+        n = len(cmap)
+        x = range(1, n+1)
+        y = [10]*n
+        grey = 'rgb(165, 165, 165)'
+
+        #CREATE LAYOUT
+        layout = go.Layout(title='COLOUR MAP NAME: %s' % (cmap_name), titlefont=dict(color=grey, size=20))
+        #CREATE BAR GRAPH
+        bar1 = go.Bar(x=x, y=y, text=cmap, marker=dict(color=cmap))
+
+        #EDIT AXES
+        layout['xaxis'].update(zeroline=False, showgrid=False, tickfont=dict(color=grey))
+        layout['yaxis'].update(zeroline=False, showgrid=False, showticklabels=False)
+
+        #COMPILE AND PLOT
+        fig = go.Figure(data=[bar1], layout=layout)
+        plot(fig, filename=out_file, show_link=False)
+
+
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED TO CONVERT EXIF DATE
 #FROM: (2010:01:31 12:31:18)
 #TO:   (20100131123118)
@@ -216,7 +326,7 @@ def format_exif_date(datestring):
     return dt.strftime(parsed, outmask)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED CREATE AN ORACLE DB CONN; USER PROMPTED FOR DETAILS.
 def dbconn_oracle(host=None, userid=None, password=None):
 
@@ -284,8 +394,9 @@ def dbconn_oracle(host=None, userid=None, password=None):
     return output
 
 
-#------------------------------------------------------------------------------
-#HELPER FUNCTION DESIGNED TO GET AND RETURN AN ODBC DRIVER NAME, USING REGEX
+#-----------------------------------------------------------------------
+#HELPER FUNCTION DESIGNED TO GET AND RETURN AN ODBC DRIVER NAME,
+#USING REGEX
 def getdrivername(drivername, returnall=False):
 
     '''
@@ -334,7 +445,7 @@ def getdrivername(drivername, returnall=False):
             return [driver for driver in pyodbc.drivers() if re.search(drivername, driver)][0]
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO TEST IF A LIBRARY IS INSTALLED.
 #USED BEFORE IMPORTING AN 'OBSCURE' LIBRARY.
 def testimport(module_name):
@@ -376,8 +487,9 @@ def testimport(module_name):
     return found
 
 
-#------------------------------------------------------------------------------
-#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR DETAILS.
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR
+#DETAILS.
 def dbconn_sql(server=None, database=None, userid=None, password=None):
 
     '''
@@ -453,7 +565,7 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
     return output
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO CLEAN HEADERS AND DATAFRAME VALUES
 def clean_df(df):
 
@@ -489,8 +601,9 @@ def clean_df(df):
     return df
 
 
-#------------------------------------------------------------------------------
-#FUNCTION USED TO TEST IF A FILE EXISTS AND NOTIFY THE USER IF IT DOESN'T EXIST
+#-----------------------------------------------------------------------
+#FUNCTION USED TO TEST IF A FILE EXISTS AND NOTIFY THE USER IF IT
+#DOESN'T EXIST
 def fileexists(filepath):
 
     '''
@@ -532,8 +645,9 @@ def fileexists(filepath):
     return bValue
 
 
-#------------------------------------------------------------------------------
-#FUNCTION USED TEST IF A DIRECTORY PATH EXISTS >> DEFAULT IS TO CREATE THE PATH
+#-----------------------------------------------------------------------
+#FUNCTION USED TO TEST IF A DIRECTORY PATH EXISTS
+#DEFAULT ACTION IS TO CREATE THE PATH, IF IT DOESN'T EXIST
 def direxists(path, create_path=True):
 
     '''
@@ -586,7 +700,7 @@ def direxists(path, create_path=True):
     return bFound
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO READ A JSON FILE, AND RETURN A DICTIONARY
 def json_read(filepath):
 
@@ -623,7 +737,7 @@ def json_read(filepath):
         return vals
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #METHOD USED TO WRITE A JSON FILE, FROM A PASSED DICTIONARY
 def json_write(dictionary, filepath='c:/temp/tempfile.json'):
 
@@ -659,13 +773,13 @@ def json_write(dictionary, filepath='c:/temp/tempfile.json'):
         json.dump(dictionary, outfile, sort_keys=True)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION FOR DECODING UNICODE AND RETURNING AS STRING
 def unidecode(string):
 
     '''
     DESIGN:
-    Method designed test a passed string for being a unicode type,
+    Method designed to test a passed string for being unicode type,
     then return a decoded string value.
 
     If the passed string is not unicode, the original value is
@@ -695,9 +809,9 @@ def unidecode(string):
     return decoded
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #               -----     DEPRECIATED / REMOVED    -----
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #METHOD FOR DISPLAYING VERSION AND HELP INFORMATION
 #REPLACED WITH: n/a
 def ArgvParse(Arguments=None):
@@ -714,7 +828,7 @@ def ArgvParse(Arguments=None):
     print ArgvParse.__doc__
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO CLEAR HEADERS AND DATA IN A DATAFRAME
 #REPLACED WITH: clean_df()
 def CleanDF(dfData):
@@ -738,8 +852,8 @@ def CleanDF(dfData):
     return clean_df(df=dfData)
 
 
-#------------------------------------------------------------------------------
-#FUNCTION USED TEST IF A DIRECTORY PATH EXISTS >> DEFAULT IS TO CREATE THE PATH
+#-----------------------------------------------------------------------
+#FUNCTION USED TEST IF A DIRECTORY PATH EXISTS
 #REPLACED WITH: direxists()
 def DirExists(FilePath, CreatePath=True):
 
@@ -762,8 +876,9 @@ def DirExists(FilePath, CreatePath=True):
     return direxists(path=FilePath, create_path=CreatePath)
 
 
-#------------------------------------------------------------------------------
-#FUNCTION USED TO TEST IF A FILE EXISTS AND NOTIFY THE USER IF IT DOESNT EXIST
+#-----------------------------------------------------------------------
+#FUNCTION USED TO TEST IF A FILE EXISTS AND NOTIFY THE USER IF IT
+#DOESNT EXIST
 #REPLACED WITH: fileexists()
 def FileExists(FilePath):
 
@@ -786,7 +901,7 @@ def FileExists(FilePath):
     return fileexists(filepath=FilePath)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION RETURNS A LIST OF CONVERTED VALUES FROM A MATPLOTLIB COLORMAP
 #REPLACED WITH: getcolormap()
 def GetColourMap(Map='Blues', N=1, DType='HEX'):
@@ -817,7 +932,7 @@ def GetColourMap(Map='Blues', N=1, DType='HEX'):
     return getcolormap(colormap=Map, n=N, dtype=DType)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO GET AND RETURN A CONFIG FILE AS A DICTIONARY
 #REPLACED WITH: n/a
 def GetConfig(FilePath=None):
@@ -834,8 +949,9 @@ def GetConfig(FilePath=None):
     print GetConfig.__doc__
 
 
-#------------------------------------------------------------------------------
-#HELPER FUNCTION DESIGNED TO GET AND RETURN AN ODBC DRIVER NAME, USING REGEX
+#-----------------------------------------------------------------------
+#HELPER FUNCTION DESIGNED TO GET AND RETURN AN ODBC DRIVER NAME,
+#USING REGEX
 #REPLACED WITH: getdrivername()
 def GetDriverName(re_DriverName):
 
@@ -864,7 +980,7 @@ def GetDriverName(re_DriverName):
     return getdrivername(drivername=re_DriverName)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION FOR DECODING UNICODE AND RETURNING AS STRING
 #REPLACED WITH: unidecode()
 def Unidecode(string):
@@ -892,9 +1008,9 @@ def Unidecode(string):
     return unidecode(string=string)
 
 
-#------------------------------------------------------------------------------
-#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR USE IN
-#PLOTLY
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR
+#USE IN PLOTLY
 #REPLACED WITH: n/a
 def colours_addRGB(colorset=None, category=None, count=None):
 
@@ -910,9 +1026,9 @@ def colours_addRGB(colorset=None, category=None, count=None):
     print colours_addRGB.__doc__
 
 
-#------------------------------------------------------------------------------
-#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR USE IN
-#PLOTLY
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR
+#USE IN PLOTLY
 #REPLACED WITH: n/a
 def colours_addRGBA(colorset=None, category=None, count=None, alpha=None):
 
@@ -928,7 +1044,7 @@ def colours_addRGBA(colorset=None, category=None, count=None, alpha=None):
     print colours_addRGBA.__doc__
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO READ A JSON FILE, AND RETURN A DICTIONARY
 #REPLACED WITH: json_read()
 def jsonRead(FilePath):
@@ -957,7 +1073,7 @@ def jsonRead(FilePath):
     return json_read(FilePath)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION USED TO WRITE A JSON FILE, FROM A PASSED DICTIONARY
 #REPLACED WITH: json_write()
 def jsonWrite(Dictionary, FilePath='c:/temp/tempfile.json'):
@@ -986,7 +1102,7 @@ def jsonWrite(Dictionary, FilePath='c:/temp/tempfile.json'):
     return json_write(Dictionary, FilePath)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED TO CONVERT EXIF DATE
 #FROM: (2010:01:31 12:31:18)
 #TO:   (20100131123118)
@@ -1017,7 +1133,7 @@ def format_exifDate(value):
     return format_exif_date(datestring=value)
 
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED CREATE AN ORACLE DB CONN; USER PROMPTED FOR DETAILS.
 #REPLACED WITH: dbconn_oracle()
 def dbConn_Oracle(host=None, userid=None, password=None):
@@ -1044,8 +1160,9 @@ def dbConn_Oracle(host=None, userid=None, password=None):
     return dbconn_oracle(host=host, userid=userid, password=password)
 
 
-#------------------------------------------------------------------------------
-#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR DETAILS.
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR
+#DETAILS.
 #REPLACED WITH: dbconn_sql()
 def dbConn_SQL(server=None, database=None, userid=None, password=None):
 

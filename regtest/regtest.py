@@ -88,10 +88,12 @@ def main():
     GetConfig
     GetDriverName
     Unidecode
+    x- __prev_mpl       #NOT TESTED
+    x- __prev_plotly    #NOT TESTED
     clean_df
     colours_addRGB
     colours_addRGBA
-    x- dbConn_Oracle  #DB CONN(S) REMOVED DUE TO DB CONN COMPLICATIONS
+    x- dbConn_Oracle    #DB CONN(S) REMOVED DUE TO DB CONN COMPLICATIONS
     x- dbConn_SQL
     x- dbconn_oracle
     x- dbconn_sql
