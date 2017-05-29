@@ -11751,17 +11751,28 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="utils_3.0.1">utils_3.0.1<a class="anchor-link" href="#utils_3.0.1">&#182;</a></h1><hr>
-<p>The <strong>utils</strong> package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) reading, etc.</p>
-<h3 id="LINUX-INSTALLATION">LINUX INSTALLATION<a class="anchor-link" href="#LINUX-INSTALLATION">&#182;</a></h3><hr>
-<p>Any of the following options will get you there ...</p>
+<h1 id="utils_4.0.0">utils_4.0.0<a class="anchor-link" href="#utils_4.0.0">&#182;</a></h1><hr>
+<p>The <strong>utils</strong> package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.</p>
+<h2 id="PACKAGE-CONFIGURATION">PACKAGE CONFIGURATION<a class="anchor-link" href="#PACKAGE-CONFIGURATION">&#182;</a></h2><hr>
+<p>As of program version 4, a number of other standalone modules have been added to the utils package.  Outlined below is the current package configuration.</p>
+<ul>
+<li>utils<ul>
+<li>utils</li>
+<li>config</li>
+<li>log</li>
+<li>reporterror</li>
+</ul>
+</li>
+</ul>
+<h2 id="INSTALLATION">INSTALLATION<a class="anchor-link" href="#INSTALLATION">&#182;</a></h2><hr>
+<h3 id="LINUX">LINUX<a class="anchor-link" href="#LINUX">&#182;</a></h3><p>Any of the following options will get you there ...</p>
 <ul>
 <li><p><strong>GitHub</strong></p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_3.x.x/
+<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_4.x.x/
 </pre></div>
 </li>
 <li><p><strong>Local / Remote Git Repo</strong></p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+file:///&lt;repo/location&gt;/utils_3.x.x/
+<div class="highlight"><pre><span></span>&gt; sudo pip install git+file:///&lt;repo/location&gt;/utils
 </pre></div>
 </li>
 <li><p><strong>Python Setup File</strong></p>
@@ -11769,15 +11780,14 @@ div#notebook {
 </pre></div>
 </li>
 </ul>
-<h3 id="WINDOWS-INSTALLATION">WINDOWS INSTALLATION<a class="anchor-link" href="#WINDOWS-INSTALLATION">&#182;</a></h3><hr>
-<p>Any of the following options will get you there ...</p>
+<h3 id="WINDOWS-INSTALLATION">WINDOWS INSTALLATION<a class="anchor-link" href="#WINDOWS-INSTALLATION">&#182;</a></h3><p>Any of the following options will get you there ...</p>
 <ul>
 <li><p><strong>GitHub</strong></p>
-<div class="highlight"><pre><span></span>&gt; pip install git+https://github.com/s3dev/utils_3.x.x/
+<div class="highlight"><pre><span></span>&gt; pip install git+https://github.com/s3dev/utils_4.x.x/
 </pre></div>
 </li>
 <li><p><strong>Local / Remote Git Repo</strong></p>
-<div class="highlight"><pre><span></span>&gt; pip install git+file:///&lt;repo/location&gt;/utils_3.x.x/
+<div class="highlight"><pre><span></span>&gt; pip install git+file:///&lt;repo/location&gt;/utils
 </pre></div>
 </li>
 <li><p><strong>Python Setup File</strong></p>
@@ -11785,18 +11795,26 @@ div#notebook {
 </pre></div>
 </li>
 </ul>
-<h3 id="UPGRADING-A-CURRENT-INSTALLATION">UPGRADING A CURRENT INSTALLATION<a class="anchor-link" href="#UPGRADING-A-CURRENT-INSTALLATION">&#182;</a></h3><hr>
-<p>To upgrade a current installation to the latest version, use an install command as listed above, and append the <code>--upgrade</code> argument to the command.<br>
+<h3 id="UPGRADING-A-CURRENT-INSTALLATION">UPGRADING A CURRENT INSTALLATION<a class="anchor-link" href="#UPGRADING-A-CURRENT-INSTALLATION">&#182;</a></h3><p>To upgrade a current installation to the latest version, use an install command as listed above, and append the <code>--upgrade</code> argument to the command.<br>
 For example:</p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --upgrade
+<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --upgrade
 </pre></div>
-<h3 id="PACKAGE-HELP">PACKAGE HELP<a class="anchor-link" href="#PACKAGE-HELP">&#182;</a></h3><hr>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.utils</span> <span class="kn">as</span> <span class="nn">u</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<h2 id="PACKAGE-HELP">PACKAGE HELP<a class="anchor-link" href="#PACKAGE-HELP">&#182;</a></h2><hr>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.utils</span> <span class="kn">as</span> <span class="nn">utils</span>
+<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">utils</span><span class="p">)</span>
 </pre></div>
-<h3 id="TROUBLESHOOTING">TROUBLESHOOTING<a class="anchor-link" href="#TROUBLESHOOTING">&#182;</a></h3><hr>
-<p>If the Linux (or Windows) installation is giving you trouble with <strong>cx_Oracle</strong>, use the <code>--no-deps</code> argument for <strong>pip</strong>.  This will ignore the dependencies, and allow you to install each one yourself, <em>if</em> you require them.</p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --no-deps
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.config</span> <span class="kn">as</span> <span class="nn">config</span>
+<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.log</span> <span class="kn">as</span> <span class="nn">log</span>
+<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.reporterror</span> <span class="kn">as</span> <span class="nn">reporterror</span>
+<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">reporterror</span><span class="p">)</span>
+</pre></div>
+<h2 id="TROUBLESHOOTING">TROUBLESHOOTING<a class="anchor-link" href="#TROUBLESHOOTING">&#182;</a></h2><hr>
+<p>If the Linux (or Windows) installation is giving you trouble with <strong>cx_Oracle</strong>, use the <code>--no-deps</code> argument for <strong>pip</strong>.  This argument will ignore the dependencies, and allow you to install each dependency yourself, <em>if</em> you require it.</p>
+<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --no-deps
 </pre></div>
 
 </div>

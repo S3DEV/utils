@@ -1,21 +1,33 @@
 
-# utils_3.0.1
+# utils_4.0.0
 ---
-The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) reading, etc.
+The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
 
 
-### LINUX INSTALLATION
+## PACKAGE CONFIGURATION
 ---
+As of program version 4, a number of other standalone modules have been added to the utils package.  Outlined below is the current package configuration.
+
+- utils
+   + utils
+   + config
+   + log
+   + reporterror
+
+
+## INSTALLATION
+---
+### LINUX
 Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.x.x/
+> sudo pip install git+https://github.com/s3dev/utils_4.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> sudo pip install git+file:///<repo/location>/utils_3.x.x/
+> sudo pip install git+file:///<repo/location>/utils
 ```
 
 - **Python Setup File**
@@ -25,17 +37,16 @@ Any of the following options will get you there ...
 
 
 ### WINDOWS INSTALLATION
----
 Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> pip install git+https://github.com/s3dev/utils_3.x.x/
+> pip install git+https://github.com/s3dev/utils_4.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> pip install git+file:///<repo/location>/utils_3.x.x/
+> pip install git+file:///<repo/location>/utils
 ```
 
 - **Python Setup File**
@@ -45,27 +56,38 @@ Any of the following options will get you there ...
 
 
 ### UPGRADING A CURRENT INSTALLATION
----
 To upgrade a current installation to the latest version, use an install command as listed above, and append the `--upgrade` argument to the command.  
 For example:
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --upgrade
+> sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --upgrade
 ```
 
 
-### PACKAGE HELP
+## PACKAGE HELP
 ---
 ```python
-> import utils.utils as u
-> help(u)
+> import utils.utils as utils
+> help(utils)
+```  
+```python
+> import utils.config as config
+> help(config)
+```  
+```python
+> import utils.log as log
+> help(log)
+```  
+```python
+> import utils.reporterror as reporterror
+> help(reporterror)
 ```  
 
 
-### TROUBLESHOOTING
+## TROUBLESHOOTING
 ---
-If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This will ignore the dependencies, and allow you to install each one yourself, *if* you require them.  
+If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This argument will ignore the dependencies, and allow you to install each dependency yourself, *if* you require it.  
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_3.x.x/ --no-deps
+> sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --no-deps
 ```
