@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    log
-Version:    0.1.0
+Version:    0.1.1
 Py Ver:     2.7
 Purpose:    Small program designed to be a central log file creator.
             Updated to be part of the utils package, and installed into site-packages.
@@ -41,6 +41,7 @@ Date        Programmer      Version     Update
 29.05.17    J. Berendt      0.1.0       Updated to fit within the utils package.
                                         Code revised / cleaned to meet PEP-8 style standards.
                                         pylint (10/10)
+29.05.17    J. Berendt      0.1.1       Updated to add new line before UserWarning errors.
 ------------------------------------------------------------------------------------------------'''
 
 from _version_log import __version__
@@ -148,4 +149,4 @@ def write2log(filepath, text, autofill=True, printheader=False,
     except Exception as err:
 
         #NOTIFY USER OF EXCEPTION
-        print 'ERR: %s' % err
+        print '\nERR: %s' % err

@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.0.0
+Version:    3.0.1
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -97,11 +97,14 @@ Date        Programmer      Version     Update
                                             - Original method/function names still exist,
                                             but warning messages have been added advising source
                                             updates.
+29.05.17    J. Berendt      3.0.1       BUG01: utils.__version__ shows the package version rather
+                                        than the module version.
+                                        FIX01: Updated the _version call to use _version_utils.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
 #SET VERSION NUMBER
-from _version import __version__
+from _version_utils import __version__
 
 
 #-----------------------------------------------------------------------
