@@ -1,5 +1,5 @@
 
-# utils_4.0.0
+# utils_4.1.0
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
 
@@ -12,6 +12,7 @@ As of program version 4, a number of other standalone modules have been added to
    + utils
    + config
    + log
+   + progressbar
    + reporterror
 
 
@@ -77,6 +78,10 @@ For example:
 ```python
 > import utils.log as log
 > help(log)
+```  
+```python
+> import utils.progressbar as progressbar
+> help(progressbar.ProgressBar)
 ```  
 ```python
 > import utils.reporterror as reporterror
