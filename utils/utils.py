@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.0.1
+Version:    3.0.2
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -100,6 +100,11 @@ Date        Programmer      Version     Update
 29.05.17    J. Berendt      3.0.1       BUG01: utils.__version__ shows the package version rather
                                         than the module version.
                                         FIX01: Updated the _version call to use _version_utils.
+05.06.17    J. Berendt      3.0.2       BUG02: The clean_df() function returns an updated version
+                                        of the original dataframe.  A cleaned COPY should be
+                                        returned.
+                                        FIX02: Updated function so that a COPY of the df is
+                                        updated and returned, rather than the original.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
@@ -579,7 +584,7 @@ def clean_df(df):
         - column names: convert to lower case
         - values:       strip whitespace
 
-    The function will return a 'cleaned' dataframe to the program.
+    Function returns a 'cleaned' copy of the dataframe.
 
     PARAMETERS:
         - df
@@ -590,18 +595,21 @@ def clean_df(df):
     > df = u.clean_df(df)
     '''
 
+    #CREATE A COPY OF THE DATAFRAME
+    df_c = df.copy()
+
     #CLEAN HEADERS (REPLACE, STRIP WHITESPACE, UPPER CASE)
-    df.rename(columns=lambda col: col.strip().replace(' ', '_').lower(), inplace=True)
+    df_c.rename(columns=lambda col: col.strip().replace(' ', '_').lower(), inplace=True)
 
     #STRIP WHITESPACE FROM VALUES
-    for col in df.columns:
+    for col in df_c.columns:
         #TEST FOR FLOAT TYPE
-        if 'float' not in str(df[col].dtype) and 'int' not in str(df[col].dtype):
+        if 'float' not in str(df_c[col].dtype) and 'int' not in str(df_c[col].dtype):
             #STRIP WHITESPACE
-            df[col] = df[col].str.strip()
+            df_c[col] = df_c[col].str.strip()
 
     #RETURN CLEANED DATAFRAME
-    return df
+    return df_c
 
 
 #-----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 '''---------------------------------------------------------------------
 Program:    progressbar
-Version:    0.0.3
+Version:    0.0.4
 Py Ver:     2.7
 Purpose:    This is a class which provides access to a simple console
             progress bar.
@@ -23,12 +23,13 @@ Date        Programmer      Version     Update
                                         with the utils package.
 01.06.17    J. Berendt      0.0.3       Added a user defined color
                                         option.
+05.06.17    J. Berendt      0.0.4       Moved version to external file.
+                                        Added into utils package.
 ---------------------------------------------------------------------'''
 
 import sys
 import colorama
 
-#__version__ = '0.0.3'
 from _version_progressbar import __version__
 
 
