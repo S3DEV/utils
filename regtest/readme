@@ -1,2 +1,0 @@
-NOTE: regtest.py is for internal testing only.
-This folder and script should not be added to setup.py for installation.
