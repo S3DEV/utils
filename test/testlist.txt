@@ -3,3 +3,4 @@
 #--------------------------------------
 test_utils.py
 test_log.py
+test_config.py

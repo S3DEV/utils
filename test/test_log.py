@@ -26,7 +26,7 @@ import sys
 import unittest
 
 #ADD DIR PATH TO IMPORT UTILS.LOG
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import utils.log as log
 
 
