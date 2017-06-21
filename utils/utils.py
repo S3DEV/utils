@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.0.2
+Version:    3.1.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -105,6 +105,16 @@ Date        Programmer      Version     Update
                                         returned.
                                         FIX02: Updated function so that a COPY of the df is
                                         updated and returned, rather than the original.
+21.06.17    J. Berendt      3.1.0       Known low pylint score due to 'Invalid ... name' convention
+                                        warnings.  These modules will be removed on next major
+                                        update. (7.96/10)
+                                        Updated dbconn_sql and dbconn_oracle to remove None type
+                                        return after connection failure, due to pylint
+                                        'unreachable code' warning.
+                                        Added dbconn_sqlite function.
+                                        Replaced leading double underscores with single underscore.
+                                        Updated clean_df function to test for number or datetime
+                                        data types before performing column value cleaning.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
@@ -183,16 +193,16 @@ def getcolormap(colormap='Blues', n=5, dtype='hex', preview=False, preview_in='m
     #TEST FOR PREVIEW:
     if colors is not None and preview:
         #MATPLOTLIB
-        if preview_in == 'mpl': __prev_mpl(cmap=colors, cmap_name=colormap)
+        if preview_in == 'mpl': _prev_mpl(cmap=colors, cmap_name=colormap)
         #PLOTLY
-        if preview_in == 'plotly': __prev_plotly(cmap=colors, cmap_name=colormap)
+        if preview_in == 'plotly': _prev_plotly(cmap=colors, cmap_name=colormap)
 
     return colors
 
 
 #-----------------------------------------------------------------------
 #HELPFER METHOD USED TO PREVIEW A COLOUR MAP USING MATPLOTLIB
-def __prev_mpl(cmap, cmap_name):
+def _prev_mpl(cmap, cmap_name):
 
     '''
     DESIGN:
@@ -240,7 +250,7 @@ def __prev_mpl(cmap, cmap_name):
 
 #------------------------------------------------------------------------------
 #COLOUR MAP (BAR GRAPH) PREVIEW USING PLOTLY
-def __prev_plotly(cmap, cmap_name, out_file='c:/temp/cmap_graph.html'):
+def _prev_plotly(cmap, cmap_name, out_file='c:/temp/cmap_graph.html'):
 
     '''
     DESIGN:
@@ -335,6 +345,66 @@ def format_exif_date(datestring):
 
 
 #-----------------------------------------------------------------------
+#FUNCTION DESIGNED TO RETURN DB OBJECTS FOR A SQLITE DATABASE
+def dbconn_sqlite(db_path):
+
+    '''
+    DESIGN:
+    Function designed to create and return database connection and
+    cursor objects for a SQLite database, using the passed filename.
+
+    If the passed filename exists, the connection and cursor objects
+    are returned as a dictionary.
+
+    conn = [the connection object]
+    cur  = [the cursor object]
+
+    PARAMETERS:
+        - db_path
+        Full path to the SQLite database file.
+
+    DEPENDENCIES:
+    - sqlite3
+    - reporterror
+
+    USE:
+    > import utils.utils as u
+    > dbo = u.dbconn_sqlite(db_path)
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+    '''
+
+    import sqlite3 as sql
+    import reporterror
+
+    #TEST IF THE FILE EXISTS
+    #USES FILEEXISTS FUNCTION FOR USER NOTIF, IF THE FILE DOESN'T EXIST
+    if fileexists(filepath=db_path):
+
+        try:
+            #CREATE CONNECTION / CURSOR OBJECTS
+            connection = sql.connect(db_path)
+            cursor = connection.cursor()
+
+            #STORE RESULT IN DICTIONARY
+            output = dict(conn=connection, cur=cursor)
+
+        except Exception as err:
+            #NOTIFICATION
+            reporterror.reporterror(err)
+
+            #STORE EMPTY DICT AS RESULT
+            output = {}
+
+    else:
+        #STORE EMPTY DICT AS RESULT
+        output = {}
+
+    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
+    return output
+
+
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED CREATE AN ORACLE DB CONN; USER PROMPTED FOR DETAILS.
 def dbconn_oracle(host=None, userid=None, password=None):
 
@@ -394,9 +464,6 @@ def dbconn_oracle(host=None, userid=None, password=None):
         #ALERT USER TO CONNECTION ERROR
         raise ValueError('the database connection failed for (host: %s, userid: %s, pw: %s)' \
                          % (host, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
-
-        #STORE NULL RESULT
-        output = None
 
     #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
     return output
@@ -566,9 +633,6 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
         raise ValueError('the database connection failed for (server: %s, userid: %s, pw: %s)' \
                          % (server, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
 
-        #STORE NULL RESULT
-        output = None
-
     #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
     return output
 
@@ -590,10 +654,15 @@ def clean_df(df):
         - df
           The pandas dataframe for cleaning.
 
+    DEPENDENTS:
+        - numpy
+
     USE:
     > import utils.utils as u
     > df = u.clean_df(df)
     '''
+
+    import numpy as np
 
     #CREATE A COPY OF THE DATAFRAME
     df_c = df.copy()
@@ -603,8 +672,8 @@ def clean_df(df):
 
     #STRIP WHITESPACE FROM VALUES
     for col in df_c.columns:
-        #TEST FOR FLOAT TYPE
-        if 'float' not in str(df_c[col].dtype) and 'int' not in str(df_c[col].dtype):
+        #TEST FOR NUMBER AND DATETIME TYPES
+        if not np.issubdtype(df_c[col], np.datetime64) and not np.issubdtype(df_c[col], np.number):
             #STRIP WHITESPACE
             df_c[col] = df_c[col].str.strip()
 
@@ -821,8 +890,12 @@ def unidecode(string):
 
 
 #-----------------------------------------------------------------------
-#               -----     DEPRECIATED / REMOVED    -----
 #-----------------------------------------------------------------------
+#               -----     DEPRECIATED / REMOVED    -----
+#                 TO BE REMOVED ON NEXT MAJOR REVISION
+#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------
+
 #METHOD FOR DISPLAYING VERSION AND HELP INFORMATION
 #REPLACED WITH: n/a
 def ArgvParse(Arguments=None):
