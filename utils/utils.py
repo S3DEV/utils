@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.1.0
+Version:    3.1.1
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -115,6 +115,8 @@ Date        Programmer      Version     Update
                                         Replaced leading double underscores with single underscore.
                                         Updated clean_df function to test for number or datetime
                                         data types before performing column value cleaning.
+07.07.17    J. Berendt      3.1.1       Updated the dbconn_sqlite() function so the db file is
+                                        created if it doesn't exist.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
@@ -351,10 +353,8 @@ def dbconn_sqlite(db_path):
     '''
     DESIGN:
     Function designed to create and return database connection and
-    cursor objects for a SQLite database, using the passed filename.
-
-    If the passed filename exists, the connection and cursor objects
-    are returned as a dictionary.
+    cursor objects for a SQLite database, using the passed database
+    filename.
 
     conn = [the connection object]
     cur  = [the cursor object]
@@ -377,31 +377,17 @@ def dbconn_sqlite(db_path):
     import sqlite3 as sql
     import reporterror
 
-    #TEST IF THE FILE EXISTS
-    #USES FILEEXISTS FUNCTION FOR USER NOTIF, IF THE FILE DOESN'T EXIST
-    if fileexists(filepath=db_path):
+    try:
+        #CREATE CONNECTION / CURSOR OBJECTS
+        connection = sql.connect(db_path)
+        cursor = connection.cursor()
 
-        try:
-            #CREATE CONNECTION / CURSOR OBJECTS
-            connection = sql.connect(db_path)
-            cursor = connection.cursor()
+        #STORE RESULT IN DICTIONARY
+        return dict(conn=connection, cur=cursor)
 
-            #STORE RESULT IN DICTIONARY
-            output = dict(conn=connection, cur=cursor)
-
-        except Exception as err:
-            #NOTIFICATION
-            reporterror.reporterror(err)
-
-            #STORE EMPTY DICT AS RESULT
-            output = {}
-
-    else:
-        #STORE EMPTY DICT AS RESULT
-        output = {}
-
-    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
-    return output
+    except Exception as err:
+        #NOTIFICATION
+        reporterror.reporterror(err)
 
 
 #-----------------------------------------------------------------------
