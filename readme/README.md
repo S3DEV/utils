@@ -1,7 +1,9 @@
 
-# utils_4.2.0
+# utils_4.3.1
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
+
+Change log information is included in each module's header.
 
 
 ## PACKAGE CONFIGURATION
@@ -9,11 +11,31 @@ The **utils** package is a centralised location for commonly used utilities; suc
 As of program version 4, a number of other standalone modules have been added to the utils package.  Outlined below is the current package configuration.
 
 - utils
-   + utils
    + config
+      + loadconfig()
    + log
+      + **Log**
+         + write()
+         + write_blank_line()
    + progressbar
+       + **ProgressBar**
+          + update_progress()
    + reporterror
+      + reporterror()
+   + utils
+      + clean_df()
+      + dbconn_oracle()
+      + dbconn_sql()
+      + dbconn_sqlite()
+      + direxists()
+      + fileexists()
+      + format_exif_date()
+      + getcolormap
+      + getdrivername()
+      + json_read()
+      + json_write()
+      + testimport()
+      + unidecode()
 
 
 ## INSTALLATION
