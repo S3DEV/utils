@@ -1,6 +1,6 @@
 '''---------------------------------------------------------------------
 Program:    test_utils
-Version:    0.0.1
+Version:    0.0.2
 Py Ver:     2.7
 Purpose:    Unit testing module for the utils module.
 
@@ -27,6 +27,7 @@ Use:        >>> python test_utils.py
 UPDATE LOG:
 Date        Programmer      Version     Update
 05.06.17    J. Berendt      0.0.1       Written
+25.07.17    J. Berendt      0.0.2       Added reg2hex test.
 ---------------------------------------------------------------------'''
 
 import os
@@ -163,6 +164,47 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(self._json_dict, json_dict)
         #DELETE FILE
         if os.path.exists(self._json_path): os.remove(self._json_path)
+
+
+    #FUNCTION MUST RETURN AN RGBA STRING CONVERTED TO HEX
+    #RETURNED HEX MUST NOT CONTAIN AN ALPHA CHANNEL
+    def test_rgb2hex_rgb(self):
+        #DEFINE RGB(A) LIST
+        l_rgba = ['rgba(195, 00, 0, 0)', 'rgba(0, 100, 33, 253)',
+                  'rgba(105, 0, 10, 0.75)', 'rgba(65, 125, 50, 1)',
+                  'rgba(65, 125, 50, 1.0)', 'rgba(65, 125, 50, 0.25)',
+                  'rgba(65, 125, 50, 0.4)']
+        #DEFINE HEX LIST
+        l_hex = ['#c30000', '#006421',
+                 '#69000a', '#417d32',
+                 '#417d32', '#417d32',
+                 '#417d32']
+
+        #COMPARE RGB AND HEX VALUES FOR EACH PAIR >> STORE RESULT TO LIST
+        passed = [u.rgb2hex(rgb_string=r, drop_alpha=True) == h for r, h in zip(l_rgba, l_hex)]
+
+        #UNIT TEST
+        self.assertFalse(False in passed)
+
+
+    #FUNCTION MUST RETURN AN RGBA STRING CONVERTED TO HEX
+    def test_rgb2hex_rgba(self):
+        #DEFINE RGB(A) LIST
+        l_rgba = ['rgba(195, 00, 0, 0)', 'rgba(0, 100, 33, 253)',
+                  'rgba(105, 0, 10, 0.75)', 'rgba(65, 125, 50, 1)',
+                  'rgba(65, 125, 50, 1.0)', 'rgba(65, 125, 50, 0.25)',
+                  'rgba(65, 125, 50, 0.4)']
+        #DEFINE ALPHA HEX LIST
+        l_ahex = ['#00c30000', '#fd006421',
+                  '#bf69000a', '#ff417d32',
+                  '#ff417d32', '#40417d32',
+                  '#66417d32']
+
+        #COMPARE RGB AND HEX VALUES FOR EACH PAIR >> STORE RESULT TO LIST
+        passed = [u.rgb2hex(rgb_string=r, drop_alpha=False) == h for r, h in zip(l_rgba, l_ahex)]
+
+        #UNIT TEST
+        self.assertFalse(False in passed)
 
 
 #-----------------------------------------------------------------------

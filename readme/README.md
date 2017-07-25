@@ -1,5 +1,5 @@
 
-# utils_4.3.1
+# utils_4.4.0
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
 
@@ -34,6 +34,7 @@ As of program version 4, a number of other standalone modules have been added to
       + getdrivername()
       + json_read()
       + json_write()
+      + rgb2hex()
       + testimport()
       + unidecode()
 

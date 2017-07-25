@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.1.1
+Version:    3.2.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -117,12 +117,13 @@ Date        Programmer      Version     Update
                                         data types before performing column value cleaning.
 07.07.17    J. Berendt      3.1.1       Updated the dbconn_sqlite() function so the db file is
                                         created if it doesn't exist.
+25.07.17    J. Berendt      3.2.0       Added the rgb2hex function.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
 #SET VERSION NUMBER
 from _version_utils import __version__
-
+import reporterror
 
 #-----------------------------------------------------------------------
 #METHOD USED FOR DEPLOYMENT TESTING
@@ -133,6 +134,102 @@ def __test():
     Method used for testing only.
     '''
     print 'This is only a test.'
+
+
+#-----------------------------------------------------------------------
+#FUNCTION USED TO CONVERT AN RGB STRING TO A HEX VALUE
+def rgb2hex(rgb_string, drop_alpha=False):
+
+    '''
+    DESIGN:
+    This function is designed to convert an rgb (or rgba) string to a
+    hex string.
+
+    For example: 'rgb(195, 0, 0)' returns #c00000
+                 'rgba(65, 125, 50, 0.25)' returns #40417d32
+
+    This is useful as some colour functions return an rgb or rgba
+    string, and matplotlib.pyplot only accepts hex strings.
+
+    Regex is used to extract the colour channels from the string.
+    Therefore, the 'rgb' or 'rgba' prefix is not required; although
+    accepted for standard use.
+
+    The extracted integer values (or float value in the case of alpha),
+    are converted to hex and returned as a compiled hex string.
+
+    If an alpha value is present, the alpha value is moved to the first
+    byte of the hex string; making the hex string read as #argb.
+
+    PARAMETERS:
+        - rgb_string
+          This is the rgb or rgba string to convert.
+        - drop_alpha (default=False)
+          'True' will drop the alpha value from the hex string.
+          This is useful for colour maps that automatically return an
+          alpha channel, yet the [plotting program] does not accept
+          alpha values.
+
+    DEPENDENCIES:
+    - re
+
+    USE:
+    > import utils.utils as u
+    > clr = u.rgb2hex('rgb(195, 0, 0)')
+    '''
+
+    import re
+
+    try:
+        #MATCH RGB CHANNELS, AND SEVERAL VARIATIONS OF (INCL OPTIONAL) ALPHA
+        #CASE WILL BE IGNORED
+        pattern = r'([0-9]{1,3},\s*[0-9]{1,3},\s*[0-9]{1,3}(,\s[0,1]{0,}\.*[0-9]{0,})?)'
+        exp = re.compile(pattern, flags=re.IGNORECASE)
+
+        #EXTRACT COLOUR CHANNEL VALUES FROM PASSED STRING
+        vals = exp.search(rgb_string).groups()[0].split(',')
+        #REMOVE COMMAS FROM EACH STRING & TRIM WHITESPACE
+        vals = [val.replace(',', '').strip() for val in vals]
+
+        #TEST IF ALPHA SHOULD BE STRIPPED
+        if drop_alpha is True and len(vals) == 4: vals = vals[:3]
+
+        #TEST IF ALPHA CHANNEL PROVIDED
+        if len(vals) == 4:
+            #TEST IF ALPHA CHANNEL IN FLOAT >> CONVERT TO INTEGER (BETWEEN 0 AND 255)
+            vals[3] = int(round(float(vals[3]) * 255, 0)) if 0 <= float(vals[3]) <= 1 else vals[3]
+
+        #CONVERT VALUES FROM STRING TO INT
+        ints = [int(i) for i in vals]
+
+        #TEST IF ALPHA CHANNEL PROVIDED
+        if len(ints) == 4:
+            #MOVE ALPHA CHANNEL TO BEGINNING OF LIST
+            ints.insert(0, ints[3])
+            #SPLIT CHANELS
+            r, g, b, a = [i for i in ints[:4]]
+            #CONVERT TO HEX STRING
+            xhex = '#{:02x}{:02x}{:02x}{:02x}'.format(r,g,b,a)
+
+        #NO ALPHA CHANNEL
+        elif len(ints) == 3:
+            #SPLIT CHANELS
+            r, g, b = [i for i in ints]
+            #CONVERT TO HEX STRING
+            xhex = '#{:02x}{:02x}{:02x}'.format(r,g,b)
+
+        else:
+            #NOTIFY USER OF INCORRECT FORMAT
+            raise ValueError('The quantity of integer values to convert must be 3 or 4 values.\n\n'\
+                             'The colour channel list musts be in this format: ' \
+                             '(r, g, b) or (r, g, b, a) to include the alpha channel.')
+
+        #RETURN CONVERTED HEX VALUE AS STRING
+        return str(xhex)
+
+    except Exception as err:
+        #NOTIFICATION
+        reporterror.reporterror(err)
 
 
 #-----------------------------------------------------------------------
@@ -375,7 +472,6 @@ def dbconn_sqlite(db_path):
     '''
 
     import sqlite3 as sql
-    import reporterror
 
     try:
         #CREATE CONNECTION / CURSOR OBJECTS
