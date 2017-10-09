@@ -20,6 +20,7 @@ Date        Programmer      Version     Update
 09.10.17    J. Berendt      0.0.2       Utils version 4.5.0 included moving the README files to
                                         the root directory, for GitHub use.
                                         Updated this setup file to use the new README location.
+                                        Added mysql-connector==2.1.4 to the required packages.
 -------------------------------------------------------------------------------------------------'''
 
 import sys
@@ -46,7 +47,7 @@ params = dict(prog=PACKAGE,
               url='https://73rdstreetdevelopment.wordpress.com',
               license='MIT',
               packages=find_packages(),
-              install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly'],
+              install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly', 'mysql-connector==2.1.4'],
               data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE'])]
               )
 
