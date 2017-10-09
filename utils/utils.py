@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.2.0
+Version:    3.3.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -118,11 +118,14 @@ Date        Programmer      Version     Update
 07.07.17    J. Berendt      3.1.1       Updated the dbconn_sqlite() function so the db file is
                                         created if it doesn't exist.
 25.07.17    J. Berendt      3.2.0       Added the rgb2hex function.
+09.10.17    J. Berendt      3.3.0       Added dbconn_mysql() function.
+                                        Minor docstring revisions.
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
 #SET VERSION NUMBER
 from _version_utils import __version__
+import config
 import reporterror
 
 #-----------------------------------------------------------------------
@@ -494,8 +497,8 @@ def dbconn_oracle(host=None, userid=None, password=None):
     DESIGN:
     Function designed to create a connection to an Oracle database
     using the provided login details.  If a login detail is not
-    provided, the user is prompted.
-    This can be used as a security feature,
+    provided, the user is prompted; which can be used as a security
+    feature.
 
     The connection is tested.  If successful, the connection and
     cursor objects are returned to the calling program, as a
@@ -544,8 +547,141 @@ def dbconn_oracle(host=None, userid=None, password=None):
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('the database connection failed for (host: %s, userid: %s, pw: %s)' \
-                         % (host, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
+        raise ValueError('The database connection failed for ' \
+                         '(host: %s, userid: %s, pw: xxx...%s)\n%s' % \
+                         (host, userid, password[-3:], err))
+
+    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
+    return output
+
+
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED CREATE A MYSQL DB CONN; USER PROMPTED FOR DETAILS.
+def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306,
+                 from_file=False, filename=None):
+
+    '''
+    DESIGN:
+    Function designed to create a connection to a MySQL database
+    using the provided login details, or directly from a config file.
+    If a login detail is not provided, the end-user is prompted; which
+    can be used as a security feature.
+
+    Once all credentials are gathered, the connection is tested.  If
+    successful, the connection and cursor objects are returned to the
+    calling program, as a dictionary.
+
+    conn = [the connection object]
+    cur  = [the cursor object]
+
+    NOTE: To prompt for login details, leave the argument(s) blank.
+
+    SOURCE:
+    The connection argument keys for a MySQL connection using the
+    mysql.connection library, are listed here:
+    https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
+
+    PARAMETERS:
+        - host (default=None)
+          IP address or machine name of the host or database server
+        - userid (default=None)
+          user name used to authenticate
+        - password (default=None)
+          just what it says on the tin  :-)
+        - database (default=None)
+          name of the database to connect
+        - port (default=3306)
+          the TCP/IP port of the MySQL server; must be an integer
+        - from_file (default=False)
+          boolean flag instructing the function to use the provided
+          config (JSON) file for connection details
+        - filename (default=None)
+          file path and name of the JSON file containing the connection
+          details
+
+    DEPENDENCIES:
+    - mysql-connector (2.1.4)
+      Installation: > pip install mysql-connector==2.1.4
+
+    USE: PASSED CONNECTION DETAILS:
+    > import utils.utils as u
+    > dbo = u.dbconn_mysql(host, userid, password, database)
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+
+    USE: CONNECTION DETAILS FROM JSON:
+    > import utils.utils as u
+    > dbo = u.dbconn_mysql(from_file=True, filename='db_config.json')
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+    '''
+
+    import mysql.connector as sql
+
+    #------------------------
+    # GET CONNECTION DETAILS
+    #------------------------
+    try:
+
+        #INITIALISE
+        creds = dict()
+        output = dict()
+
+        #TEST IF CONFIG FILE IS USED
+        if from_file:
+            #SET KEYS TO CHECK
+            db_keys = ['user', 'password', 'database', 'host', 'port']
+
+            #LOAD CONNECTION DETAILS FROM CONFIG FILE
+            conf = config.loadconfig(filename=filename)
+
+            #LOOP THROUGH EXPECTED KEYS
+            for key in db_keys:
+                #TEST KEY EXISTS IN CONFIG FILE
+                if conf.has_key(key):
+                    #ADD EXISTING VALUE TO CREDENTIAL DICT (USED FOR CONNECTION)
+                    creds[key] = conf[key]
+                else:
+                    #PROMPT FOR VALUE >> ADD TO CREDENTIAL DICT
+                    creds[key] = raw_input('please enter the mysql %s: ' % key)
+
+        else:
+            #TEST FOR PASSED ARGUMENTS >> PROMPT IF A PARAMETER IS MISSING / BLANK
+            if host is None: host = raw_input('mysql host name: ')
+            if userid is None: userid = raw_input('myql userid: ')
+            if password is None: password = raw_input('mysql password (for %s): ' % userid)
+            if database is None: database = raw_input('mysql database to use (on %s): ' % host)
+            if bool(port) is False: port = int(raw_input('mysql port (for %s on %s), as integer: '
+                                                         % (database, host)))
+
+            #BUILD DICTIONARY TO PASS INTO CONNECTIONS
+            creds = dict(user=userid,
+                         password=password,
+                         database=database,
+                         host=host,
+                         port=port)
+
+    except Exception as err:
+        #USER NOTIFICATION
+        reporterror.reporterror(error=err)
+
+
+    #---------------------
+    # MAKE THE CONNECTION
+    #---------------------
+    try:
+        #CREATE CONNECTION / CURSOR OBJECTS
+        connection = sql.connect(**creds)
+        cursor = connection.cursor()
+
+        #STORE RESULT IN DICTIONARY
+        output = dict(conn=connection, cur=cursor)
+
+    except Exception as err:
+        #ALERT USER TO CONNECTION ERROR
+        raise ValueError('The database connection failed for ' \
+                         '(host: %s, userid: %s, pw: xxx...%s)\n%s' % \
+                         (creds['host'], creds['user'], creds['password'][-3:], err))
 
     #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
     return output
@@ -653,8 +789,8 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
     DESIGN:
     Function designed to create a connection to a SQL Server database
     using the provided login parameters.  If a login detail is not
-    provided, the user is prompted.
-    This can be used as a security feature,
+    provided, the user is prompted; which can be used as a security
+    feature.
 
     The connection is tested.  If successful, the connection and cursor
     objects are returned to the calling program, as a dictionary.
@@ -712,8 +848,9 @@ def dbconn_sql(server=None, database=None, userid=None, password=None):
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('the database connection failed for (server: %s, userid: %s, pw: %s)' \
-                         % (server, userid, 'xxx...' + password[-3:]) + '\n' + str(err))
+        raise ValueError('The database connection failed for ' \
+                         '(server: %s, userid: %s, pw: xxx...%s)\n%s' % \
+                         (server, userid, password[-3:], err))
 
     #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
     return output

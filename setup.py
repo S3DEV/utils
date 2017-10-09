@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    setup.py
-Version:    0.0.1
+Version:    0.0.2
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
 
@@ -17,6 +17,9 @@ Comments:
 UPDATE LOG:
 Date        Programmer      Version     Update
 22.03.17    J. Berendt      0.0.1       Written
+09.10.17    J. Berendt      0.0.2       Utils version 4.5.0 included moving the README files to
+                                        the root directory, for GitHub use.
+                                        Updated this setup file to use the new README location.
 -------------------------------------------------------------------------------------------------'''
 
 import sys
@@ -44,7 +47,7 @@ params = dict(prog=PACKAGE,
               license='MIT',
               packages=find_packages(),
               install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly'],
-              data_files=[(INST_ROOT, ['readme/README.html', 'readme/README.md', 'LICENSE'])]
+              data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE'])]
               )
 
 #SETUP PARAMETERS
