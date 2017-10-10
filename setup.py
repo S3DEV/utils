@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    setup.py
-Version:    0.0.2
+Version:    0.0.3
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
 
@@ -21,6 +21,8 @@ Date        Programmer      Version     Update
                                         the root directory, for GitHub use.
                                         Updated this setup file to use the new README location.
                                         Added mysql-connector==2.1.4 to the required packages.
+10.10.17    J. Berendt      0.0.3       Added colorama to the required packages, in support of the
+                                        user_interface module.
 -------------------------------------------------------------------------------------------------'''
 
 import sys
@@ -47,7 +49,8 @@ params = dict(prog=PACKAGE,
               url='https://73rdstreetdevelopment.wordpress.com',
               license='MIT',
               packages=find_packages(),
-              install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly', 'mysql-connector==2.1.4'],
+              install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly',
+                                'mysql-connector==2.1.4', 'colorama'],
               data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE'])]
               )
 

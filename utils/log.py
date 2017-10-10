@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    log
-Version:    0.2.0
+Version:    0.3.0
 Py Ver:     2.7
 Purpose:    Small program designed to be a central log file creator.
             Updated to be part of the utils package, and installed into site-packages.
@@ -49,6 +49,8 @@ Date        Programmer      Version     Update
                                         Added warnings indicating that write2log has been
                                         depreciated and will be removed in future utils versions.
                                         pylint (10/10)
+10.10.17    J. Berendt      0.3.0       Updated to remove depreciated methods and functions.
+                                        - This update aligns with the utils v5 update.
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -225,76 +227,3 @@ class Log(object):
         except Exception as err:
             #NOTIFICATION
             reporterror.reporterror(err)
-
-
-#-----------------------------------------------------------------------
-# --- DEPRECIATED ---
-#-----------------------------------------------------------------------
-def write2log(filepath, text, autofill=True, printheader=False,
-              headertext=''):
-
-    '''
-    !!! WARNING !!!
-
-    This method has been depreciated and will be removed from future
-    versions of utils.
-
-    !!! WARNING !!!
-    '''
-
-
-    try:
-
-        #DEPRECIATION NOTICE:
-        print '\nDEPRECIATION WARNING:\nThe write2log method has been depreciated and will ' \
-        'be removed in a future version of utils.\n\n' \
-        'ACTION:\nUpdate your code to use the new Log class, and its writing members.\n'
-
-        #VALIDATION
-        #TEST THE LOG FILE EXISTS (IF HEADER IS NOT REQUESTED)
-        if printheader is False and os.path.exists(filepath) is False:
-            #NOTIFY USER
-            raise UserWarning('The log file does not exist, however a header was not requested. '
-                              'A header must be written at the time of log file creation.\n')
-
-
-        #VALIDATION
-        #TEST PRINTHEADER ARGUMENT, TO ENSURE A HEADER STRING IS BEING PASSED >> RAISE ERROR
-        if printheader is True and headertext == '':
-            #NOTIFY USER
-            raise UserWarning('The printheader argument is True, however the headertext string is '
-                              'blank. A headertext string must also be supplied.\n')
-
-
-        #HEADER
-        #TEST PRINTHEADER ARGUMENT, TO ENSURE A HEADER STRING IS BEING PASSED >> PRINT HEADER
-        if printheader is True and headertext != '' and os.path.exists(filepath) is False:
-            #CREATE FILE
-            with open(filepath, 'a') as f:
-                #WRITE HEADER
-                f.write(headertext)
-                #ADD NEW LING CHARACTER
-                f.write('\n')
-
-
-        #LOG TEXT
-        #TEST THAT TEXT IS PASSED >> WRITE TEXT TO LOG
-        if text != '':
-
-            #TEST FOR AUTOFILL >> BUILD AUTOFILL STRING
-            autotext = '%s,%s,%s,' % (dt.now(), socket.gethostname(), getpass.getuser()) \
-                       if autofill is True else ''
-
-            #APPEND TEXT TO LOG FILE
-            with open(filepath, 'a') as f:
-                #WRITE TEXT
-                f.write(autotext)
-                f.write(text)
-                #ADD NEW LINE CHARACTER
-                f.write('\n')
-
-
-    except Exception as err:
-
-        #NOTIFY USER OF EXCEPTION
-        print '\nERR: %s' % err

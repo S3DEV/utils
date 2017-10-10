@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    3.3.0
+Version:    4.0.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -120,6 +120,10 @@ Date        Programmer      Version     Update
 25.07.17    J. Berendt      3.2.0       Added the rgb2hex function.
 09.10.17    J. Berendt      3.3.0       Added dbconn_mysql() function.
                                         Minor docstring revisions.
+10.10.17    J. Berendt      4.0.0       Updated to remove depreciated methods and functions.
+                                        - This update aligns with the utils v5 update.
+                                        Updated variables in fileexists() and direxists()  to
+                                        lower case.  pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 #-----------------------------------------------------------------------
@@ -928,20 +932,20 @@ def fileexists(filepath):
     import os
 
     #INITIALISE VARIABLE
-    bValue = False
+    found = False
 
     #TEST IF FILE EXISTS
     if os.path.isfile(filepath):
         #SET FLAG
-        bValue = True
+        found = True
     else:
         #NOTIFY USER
         print 'the requested file cannot be found: (%s)\n' % filepath
         #SET FLAG
-        bValue = False
+        found = False
 
     #RETURN BOOLEAN TO PROGRAM
-    return bValue
+    return found
 
 
 #-----------------------------------------------------------------------
@@ -976,14 +980,14 @@ def direxists(path, create_path=True):
     import os
 
     #INITIALISE VARIABLE
-    bFound = False
+    found = False
 
     #LOOP
     while True:
         #TEST IF PATH EXISTS
         if os.path.exists(path):
             #FLAG AS FOUND
-            bFound = True
+            found = True
             #EXIT LOOP
             break
         else:
@@ -996,7 +1000,7 @@ def direxists(path, create_path=True):
                 break
 
     #RETURN IF DIRECTORY WAS FOUND
-    return bFound
+    return found
 
 
 #-----------------------------------------------------------------------
@@ -1106,385 +1110,3 @@ def unidecode(string):
 
     #RETURN VALUE
     return decoded
-
-
-#-----------------------------------------------------------------------
-#-----------------------------------------------------------------------
-#               -----     DEPRECIATED / REMOVED    -----
-#                 TO BE REMOVED ON NEXT MAJOR REVISION
-#-----------------------------------------------------------------------
-#-----------------------------------------------------------------------
-
-#METHOD FOR DISPLAYING VERSION AND HELP INFORMATION
-#REPLACED WITH: n/a
-def ArgvParse(Arguments=None):
-
-    '''
-    WARNING:
-    This method has been removed as of utils v3.0.0, and is no
-    longer accessible.
-
-    RECOMMENDED ALTERNATIVE(S):
-    - argparse (standard python library)
-    '''
-
-    print ArgvParse.__doc__
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TO CLEAR HEADERS AND DATA IN A DATAFRAME
-#REPLACED WITH: clean_df()
-def CleanDF(dfData):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    ACTION:
-    Revise your source code to use the 'utils.clean_df()' function.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the clean_df()
-    function; but remember to update your source.
-    '''
-
-    print CleanDF.__doc__
-
-    #PASS CODE ON TO NEW FUNCTION
-    return clean_df(df=dfData)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TEST IF A DIRECTORY PATH EXISTS
-#REPLACED WITH: direxists()
-def DirExists(FilePath, CreatePath=True):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    ACTION:
-    Revise your source code to use the 'utils.direxists()' function.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the direxists()
-    function; but remember to update your source.
-    '''
-
-    print DirExists.__doc__
-
-    #PASS CODE ON TO NEW FUNCTION
-    return direxists(path=FilePath, create_path=CreatePath)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TO TEST IF A FILE EXISTS AND NOTIFY THE USER IF IT
-#DOESNT EXIST
-#REPLACED WITH: fileexists()
-def FileExists(FilePath):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    ACTION:
-    Revise your source code to use the 'utils.fileexists()' function.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the fileexists()
-    function; but remember to update your source.
-    '''
-
-    print FileExists.__doc__
-
-    #PASS CODE ON TO NEW FUNCTION
-    return fileexists(filepath=FilePath)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION RETURNS A LIST OF CONVERTED VALUES FROM A MATPLOTLIB COLORMAP
-#REPLACED WITH: getcolormap()
-def GetColourMap(Map='Blues', N=1, DType='HEX'):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The spelling of GetColourMap has changed to drop the 'u' for
-      standardised spelling.
-    - The Map parameter has changed to colormap.
-
-    ACTION:
-    Revise your source code to use the 'utils.getcolormap()' function.
-    Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the getcolormap()
-    function; but remember to update your source.
-    '''
-
-    print GetColourMap.__doc__
-
-    #PASS CODE ON TO NEW FUNCTION
-    return getcolormap(colormap=Map, n=N, dtype=DType)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TO GET AND RETURN A CONFIG FILE AS A DICTIONARY
-#REPLACED WITH: n/a
-def GetConfig(FilePath=None):
-
-    '''
-    WARNING:
-    This method has been removed as of utils v3.0.0, and is no
-    longer accessible.
-
-    RECOMMENDED ALTERNATIVE(S):
-    - config.loadconfig() (s3dev config library)
-    '''
-
-    print GetConfig.__doc__
-
-
-#-----------------------------------------------------------------------
-#HELPER FUNCTION DESIGNED TO GET AND RETURN AN ODBC DRIVER NAME,
-#USING REGEX
-#REPLACED WITH: getdrivername()
-def GetDriverName(re_DriverName):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed to lower case.
-    - The re_DriverName parameter has changed to drivername.
-    - A returnall parameter has been added.
-
-    ACTION:
-    Revise your source code to use the 'utils.getdrivername()'
-    function. Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the getdrivername()
-    function; but remember to update your source.
-    '''
-
-    print GetDriverName.__doc__
-
-    return getdrivername(drivername=re_DriverName)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION FOR DECODING UNICODE AND RETURNING AS STRING
-#REPLACED WITH: unidecode()
-def Unidecode(string):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed to lower case.
-
-    ACTION:
-    Revise your source code to use the 'utils.unidecode()' function.
-    Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the unidecode()
-    function; but remember to update your source.
-    '''
-
-    print Unidecode.__doc__
-
-    return unidecode(string=string)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR
-#USE IN PLOTLY
-#REPLACED WITH: n/a
-def colours_addRGB(colorset=None, category=None, count=None):
-
-    '''
-    WARNING:
-    This method has been removed as of utils v3.0.0, and is no
-    longer accessible.
-
-    RECOMMENDED ALTERNATIVE(S):
-    - utils.getcolormap()  -  (contained in this module)
-    '''
-
-    print colours_addRGB.__doc__
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED TO GET AND UPDATE A COLOUR MAP FROM BREWER2MPL FOR
-#USE IN PLOTLY
-#REPLACED WITH: n/a
-def colours_addRGBA(colorset=None, category=None, count=None, alpha=None):
-
-    '''
-    WARNING:
-    This method has been removed as of utils v3.0.0, and is no
-    longer accessible.
-
-    RECOMMENDED ALTERNATIVE(S):
-    - utils.getcolormap() (s3dev utils method; using matplotlib colormaps)
-    '''
-
-    print colours_addRGBA.__doc__
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TO READ A JSON FILE, AND RETURN A DICTIONARY
-#REPLACED WITH: json_read()
-def jsonRead(FilePath):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed format and to lower case.
-    - The parameter(s) has changed case.
-
-    ACTION:
-    Revise your source code to use the 'utils.json_read()' function.
-    Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the json_read()
-    function; but remember to update your source.
-    '''
-
-    print jsonRead.__doc__
-
-    return json_read(FilePath)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION USED TO WRITE A JSON FILE, FROM A PASSED DICTIONARY
-#REPLACED WITH: json_write()
-def jsonWrite(Dictionary, FilePath='c:/temp/tempfile.json'):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed format and to lower case.
-    - The parameter(s) has changed case.
-
-    ACTION:
-    Revise your source code to use the 'utils.json_write()' method.
-    Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the json_write()
-    method; but remember to update your source.
-    '''
-
-    print jsonWrite.__doc__
-
-    return json_write(Dictionary, FilePath)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED TO CONVERT EXIF DATE
-#FROM: (2010:01:31 12:31:18)
-#TO:   (20100131123118)
-#REPLACED WITH: format_exif_date()
-def format_exifDate(value):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed format and to lower case.
-    - The parameter name has changed to datestring.
-
-    ACTION:
-    Revise your source code to use the 'utils.format_exif_date()'
-    function. Also, note the change in name and/or case for the passed
-    parameters.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the format_exif_date()
-    function; but remember to update your source.
-    '''
-
-    print format_exifDate.__doc__
-
-    return format_exif_date(datestring=value)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED CREATE AN ORACLE DB CONN; USER PROMPTED FOR DETAILS.
-#REPLACED WITH: dbconn_oracle()
-def dbConn_Oracle(host=None, userid=None, password=None):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed to lower case.
-
-    ACTION:
-    Revise your source code to use the 'utils.dbconn_oracle()'
-    function.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the dbconn_oracle()
-    function; but remember to update your source.
-    '''
-
-    print dbConn_Oracle.__doc__
-
-    return dbconn_oracle(host=host, userid=userid, password=password)
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR
-#DETAILS.
-#REPLACED WITH: dbconn_sql()
-def dbConn_SQL(server=None, database=None, userid=None, password=None):
-
-    '''
-    WARNING:
-    This function has been depreciated and is no longer in use as of
-    utils v3.0.0.
-
-    NOTABLE CHANGES:
-    - The method name has changed to lower case.
-
-    ACTION:
-    Revise your source code to use the 'utils.dbconn_sql()' function.
-
-    FALLBACK:
-    In the mean-time, I'll pass your request to the dbconn_sql()
-    function; but remember to update your source.
-    '''
-
-    print dbConn_SQL.__doc__
-
-    return dbconn_sql(server=server, database=database, userid=userid, password=password)

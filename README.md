@@ -1,5 +1,5 @@
 
-# utils_4.5.1
+# utils_5.0.0
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
 
@@ -8,20 +8,28 @@ Change log information is included in each module's header.
 
 ## PACKAGE CONFIGURATION
 ---
+With package version 5, the **depreciated methods and functions from version 4, have been deleted**.  Version 5 includes the addition of Windows registry access (via the `_winreg` package), enabling easy manipulation querying of the registry and environment variables.
+
 As of program version 4, a number of other standalone modules have been added to the utils package.  Outlined below is the current package configuration.
 
 - utils
    + config
       + loadconfig()
    + log
-      + **Log**
+      + **Log()**
          + write()
          + write_blank_line()
    + progressbar
-       + **ProgressBar**
+       + **ProgressBar()**
           + update_progress()
+   + registry
+      + **Registry()**
+         + various registry access methods and functions
    + reporterror
       + reporterror()
+   + user_interface()
+      + **UserInterface()**
+         + various console and error printing methods
    + utils
       + clean_df()
       + dbconn_oracle()
@@ -47,7 +55,7 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_4.x.x/
+> sudo pip install git+https://github.com/s3dev/utils_x.x.x/
 ```
 
 - **Local / Remote Git Repo**
@@ -66,7 +74,7 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> pip install git+https://github.com/s3dev/utils_4.x.x/
+> pip install git+https://github.com/s3dev/utils_x.x.x/
 ```
 
 - **Local / Remote Git Repo**
@@ -85,7 +93,7 @@ To upgrade a current installation to the latest version, use an install command 
 For example:
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --upgrade
+> sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
 ```
 
 
@@ -118,5 +126,5 @@ For example:
 If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This argument will ignore the dependencies, and allow you to install each dependency yourself, *if* you require it.  
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_4.x.x/ --no-deps
+> sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
 ```
