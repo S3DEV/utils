@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    registry.py
 
-Version:    0.0.2
+Version:    0.0.1
 
 Security:   NONE
 
@@ -31,12 +31,11 @@ Date        Programmer      Version     Update
 10.10.17    J. Berendt                  Extended header line length to 100 characters.
                                         Added verion file and import.
                                         pylint (10/10)
-11.10.17    J. Berendt      0.0.2       Updated user_interface import to import from utils.
 ------------------------------------------------------------------------------------------------'''
 
 import _winreg as wr
 
-from utils.user_interface import ui
+from user_interface import ui
 from _version_registry import __version__
 
 #IGNORE
