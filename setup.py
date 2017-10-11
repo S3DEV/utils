@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    setup.py
-Version:    0.0.3
+Version:    0.0.4
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
 
@@ -23,6 +23,9 @@ Date        Programmer      Version     Update
                                         Added mysql-connector==2.1.4 to the required packages.
 10.10.17    J. Berendt      0.0.3       Added colorama to the required packages, in support of the
                                         user_interface module.
+11.10.17    J. Berendt      0.0.4       BUG01: The user_interface_config.json config file cannot be
+                                        found on utils.registry import.
+                                        FIX01: Added user_interface_config.json to data_files.
 -------------------------------------------------------------------------------------------------'''
 
 import sys
@@ -51,7 +54,7 @@ params = dict(prog=PACKAGE,
               packages=find_packages(),
               install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly',
                                 'mysql-connector==2.1.4', 'colorama'],
-              data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE'])]
+              data_files=[(INST_ROOT, ['README.html', 'README.md', 'LICENSE', './utils/user_interface_config.json'])]
               )
 
 #SETUP PARAMETERS
