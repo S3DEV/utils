@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.0.2
+Version:    0.0.3
 
 Security:   NONE
 
@@ -40,6 +40,8 @@ Date        Programmer      Version     Update
                                         Extended header line length to 100 characters.
                                         Added version file and import.
                                         pylint (10/10)
+11.10.17    J. Berendt      0.0.3       BUG01: Config file could not be found on module import.
+                                        FIX01: Added './' to start of config file path.
 ------------------------------------------------------------------------------------------------'''
 
 import inspect
@@ -71,7 +73,7 @@ class UserInterface(object):
         throughout the class.
         '''
         colourinit()
-        self._cfg = config.loadconfig(filename='user_interface_config.json')
+        self._cfg = config.loadconfig(filename='./user_interface_config.json')
 
     def get_input(self, prompt):
         '''

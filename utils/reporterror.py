@@ -1,10 +1,10 @@
 '''------------------------------------------------------------------------------------------------
 Program:    reporterror
-Version:    0.0.2
+Version:    0.0.3
 Platform:   Windows / Linux
 Py Ver:     2.7
 Purpose:    Module designed to report program errors to the console
-            and/or a log file, using the utils.log.write2log() method.
+            and/or a log file, using the utils.log Log() class.
 
 Dependents: log
             sys
@@ -29,6 +29,11 @@ Date        Programmer      Version     Update
 01.01.17    J. Berendt      0.0.1       Written. pylint (10/10)
 29.05.17    J. Berendt      0.0.2       Updated to fit within the installed utils module.
                                         Added the CMD to log file output.  pylint (10/10)
+11.10.17    J. Berendt      0.0.3       BUG01: The 'ImportError: cannot import name write2log'
+                                        error is thrown on reporterror() use; as the write2log
+                                        has been deleted from utils v5.
+                                        FIX01: Replaced the write2log method call with the new
+                                        Log() class.
 ------------------------------------------------------------------------------------------------'''
 
 from _version_reporterror import __version__
@@ -61,7 +66,7 @@ def reporterror(error, logevent=False, logfilepath='c:/temp/reporterror.log'):
 
     import sys
     import traceback
-    from log import write2log as w2l
+    import log
 
     #GET TRACEBACK OBJECTS
     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -76,11 +81,12 @@ def reporterror(error, logevent=False, logfilepath='c:/temp/reporterror.log'):
     print 'CMD:\t%s'    % text
 
     #LOG ERROR
-    if logevent: w2l(filepath=logfilepath,
-                     text='ERROR: %s; CMD: %s; METHOD: %s; LINE: %s' % (error, text,
-                                                                        func_name,
-                                                                        line_num),
-                     autofill=True)
+    if logevent:
+        #SETUP THE LOGGER
+        _log = log.Log(filepath=logfilepath)
+        #LOG ERROR
+        _log.write(text='ERROR: %s; CMD: %s; METHOD: %s; LINE: %s' %
+                            (error, text, func_name, line_num))
 
     #CLEANUP
     del (exc_type, exc_obj, exc_tb)
