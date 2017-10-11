@@ -22,6 +22,8 @@ Purpose:    This module provides an interface to the Windows Command Line Interp
                   red text, black background
 
 Dependents: inspect
+            os
+            site
             colorama
             utils.config
             utils.reporterror
@@ -41,10 +43,12 @@ Date        Programmer      Version     Update
                                         Added version file and import.
                                         pylint (10/10)
 11.10.17    J. Berendt      0.0.3       BUG01: Config file could not be found on module import.
-                                        FIX01: Added './' to start of config file path.
+                                        FIX01: Added explicit config file location.
 ------------------------------------------------------------------------------------------------'''
 
+import os
 import inspect
+import site
 import reporterror
 import config
 
@@ -73,7 +77,12 @@ class UserInterface(object):
         throughout the class.
         '''
         colourinit()
-        self._cfg = config.loadconfig(filename='./user_interface_config.json')
+
+        #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY
+        ui_config_file = os.path.join(site.getsitepackages()[1], 'utils',
+                                      'user_interface_config.json')
+
+        self._cfg = config.loadconfig(filename=ui_config_file)
 
     def get_input(self, prompt):
         '''
