@@ -11778,7 +11778,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="utils_5.0.1">utils_5.0.1<a class="anchor-link" href="#utils_5.0.1">&#182;</a></h1><hr>
+<h1 id="utils_5.0.2">utils_5.0.2<a class="anchor-link" href="#utils_5.0.2">&#182;</a></h1><hr>
 <p>The <strong>utils</strong> package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.</p>
 <p>Change log information is included in each module's header.</p>
 <h2 id="PACKAGE-CONFIGURATION">PACKAGE CONFIGURATION<a class="anchor-link" href="#PACKAGE-CONFIGURATION">&#182;</a></h2><hr>
@@ -11848,56 +11848,58 @@ div#notebook {
 <h3 id="LINUX">LINUX<a class="anchor-link" href="#LINUX">&#182;</a></h3><p>Any of the following options will get you there ...</p>
 <ul>
 <li><p><strong>GitHub</strong></p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_x.x.x/
+<div class="highlight"><pre><span></span>sudo pip install git+https://github.com/s3dev/utils_x.x.x/
 </pre></div>
 </li>
 <li><p><strong>Local / Remote Git Repo</strong></p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+file:///&lt;repo/location&gt;/utils
+<div class="highlight"><pre><span></span>sudo pip install git+file:///&lt;repo/location&gt;/utils
 </pre></div>
 </li>
-<li><p><strong>Python Setup File</strong></p>
-<div class="highlight"><pre><span></span>&gt; sudo python &lt;path&gt;/utils/setup.py install
+<li><p><strong>Local Install</strong></p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> &lt;utils_project_directory&gt;
+sudo pip install .
 </pre></div>
 </li>
 </ul>
 <h3 id="WINDOWS-INSTALLATION">WINDOWS INSTALLATION<a class="anchor-link" href="#WINDOWS-INSTALLATION">&#182;</a></h3><p>Any of the following options will get you there ...</p>
 <ul>
 <li><p><strong>GitHub</strong></p>
-<div class="highlight"><pre><span></span>&gt; pip install git+https://github.com/s3dev/utils_x.x.x/
+<div class="highlight"><pre><span></span>pip install git+https://github.com/s3dev/utils_x.x.x/
 </pre></div>
 </li>
 <li><p><strong>Local / Remote Git Repo</strong></p>
-<div class="highlight"><pre><span></span>&gt; pip install git+file:///&lt;repo/location&gt;/utils
+<div class="highlight"><pre><span></span>pip install git+file:///&lt;repo/location&gt;/utils
 </pre></div>
 </li>
-<li><p><strong>Python Setup File</strong></p>
-<div class="highlight"><pre><span></span>&gt; python &lt;path&gt;/utils/setup.py install
+<li><p><strong>Local Install</strong></p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> &lt;utils_project_directory&gt;
+pip install .
 </pre></div>
 </li>
 </ul>
 <h3 id="UPGRADING-A-CURRENT-INSTALLATION">UPGRADING A CURRENT INSTALLATION<a class="anchor-link" href="#UPGRADING-A-CURRENT-INSTALLATION">&#182;</a></h3><p>To upgrade a current installation to the latest version, use an install command as listed above, and append the <code>--upgrade</code> argument to the command.<br>
 For example:</p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
+<div class="highlight"><pre><span></span>sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
 </pre></div>
 <h2 id="PACKAGE-HELP">PACKAGE HELP<a class="anchor-link" href="#PACKAGE-HELP">&#182;</a></h2><hr>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.utils</span> <span class="kn">as</span> <span class="nn">utils</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">utils</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.utils</span> <span class="kn">as</span> <span class="nn">utils</span>
+<span class="n">help</span><span class="p">(</span><span class="n">utils</span><span class="p">)</span>
 </pre></div>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.config</span> <span class="kn">as</span> <span class="nn">config</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.config</span> <span class="kn">as</span> <span class="nn">config</span>
+<span class="n">help</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.log</span> <span class="kn">as</span> <span class="nn">log</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.log</span> <span class="kn">as</span> <span class="nn">log</span>
+<span class="n">help</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
 </pre></div>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.progressbar</span> <span class="kn">as</span> <span class="nn">progressbar</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.progressbar</span> <span class="kn">as</span> <span class="nn">progressbar</span>
+<span class="n">help</span><span class="p">(</span><span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">)</span>
 </pre></div>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="kn">import</span> <span class="nn">utils.reporterror</span> <span class="kn">as</span> <span class="nn">reporterror</span>
-<span class="o">&gt;</span> <span class="n">help</span><span class="p">(</span><span class="n">reporterror</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.reporterror</span> <span class="kn">as</span> <span class="nn">reporterror</span>
+<span class="n">help</span><span class="p">(</span><span class="n">reporterror</span><span class="p">)</span>
 </pre></div>
 <h2 id="TROUBLESHOOTING">TROUBLESHOOTING<a class="anchor-link" href="#TROUBLESHOOTING">&#182;</a></h2><hr>
 <p>If the Linux (or Windows) installation is giving you trouble with <strong>cx_Oracle</strong>, use the <code>--no-deps</code> argument for <strong>pip</strong>.  This argument will ignore the dependencies, and allow you to install each dependency yourself, <em>if</em> you require it.</p>
-<div class="highlight"><pre><span></span>&gt; sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
+<div class="highlight"><pre><span></span>sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
 </pre></div>
 
 </div>

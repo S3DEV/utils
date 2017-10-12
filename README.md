@@ -1,5 +1,5 @@
 
-# utils_5.0.1
+# utils_5.0.2
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
 
@@ -55,17 +55,18 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_x.x.x/
+sudo pip install git+https://github.com/s3dev/utils_x.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> sudo pip install git+file:///<repo/location>/utils
+sudo pip install git+file:///<repo/location>/utils
 ```
 
-- **Python Setup File**
+- **Local Install**
 ```bash
-> sudo python <path>/utils/setup.py install
+cd <utils_project_directory>
+sudo pip install .
 ```
 
 
@@ -74,17 +75,18 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-> pip install git+https://github.com/s3dev/utils_x.x.x/
+pip install git+https://github.com/s3dev/utils_x.x.x/
 ```
 
 - **Local / Remote Git Repo**
 ```bash
-> pip install git+file:///<repo/location>/utils
+pip install git+file:///<repo/location>/utils
 ```
 
-- **Python Setup File**
+- **Local Install**
 ```bash
-> python <path>/utils/setup.py install
+cd <utils_project_directory>
+pip install .
 ```
 
 
@@ -93,31 +95,31 @@ To upgrade a current installation to the latest version, use an install command 
 For example:
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
+sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
 ```
 
 
 ## PACKAGE HELP
 ---
 ```python
-> import utils.utils as utils
-> help(utils)
+import utils.utils as utils
+help(utils)
 ```  
 ```python
-> import utils.config as config
-> help(config)
+import utils.config as config
+help(config)
 ```  
 ```python
-> import utils.log as log
-> help(log)
+import utils.log as log
+help(log)
 ```  
 ```python
-> import utils.progressbar as progressbar
-> help(progressbar.ProgressBar)
+import utils.progressbar as progressbar
+help(progressbar.ProgressBar)
 ```  
 ```python
-> import utils.reporterror as reporterror
-> help(reporterror)
+import utils.reporterror as reporterror
+help(reporterror)
 ```  
 
 
@@ -126,5 +128,5 @@ For example:
 If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This argument will ignore the dependencies, and allow you to install each dependency yourself, *if* you require it.  
 
 ```bash
-> sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
+sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
 ```

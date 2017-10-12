@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.0.3
+Version:    0.0.4
 
 Security:   NONE
 
@@ -21,13 +21,6 @@ Purpose:    This module provides an interface to the Windows Command Line Interp
                 - abnormal or erroneous behaviour
                   red text, black background
 
-Dependents: inspect
-            os
-            site
-            colorama
-            utils.config
-            utils.reporterror
-
 Developer:  M. Critchard
 
 Email:      mark.critchard@rolls-royce.com
@@ -44,11 +37,16 @@ Date        Programmer      Version     Update
                                         pylint (10/10)
 11.10.17    J. Berendt      0.0.3       BUG01: Config file could not be found on module import.
                                         FIX01: Added explicit config file location.
+11.10.17    J. Berendt      0.0.4       Removed the class instantiation shortcut.
+                                        BUG02: Config file install was setup for Windows, and
+                                        failed on Linux.
+                                        FIX02: Updated the path to locate the config file to use
+                                        'utils.__file__' as the starting location.
 ------------------------------------------------------------------------------------------------'''
 
 import os
 import inspect
-import site
+import utils
 import reporterror
 import config
 
@@ -64,9 +62,14 @@ from colorama import Fore, Back, Style
 class UserInterface(object):
     '''
     PURPOSE:
-    This class encapsulates the Windows Command Line Interpreter
+    This class encapsulates the Windows / Linux Command Line Interpreter
     (CLI). Its methods provide a standard way of getting data
     and reporting normal, alternative and abnormal behaviour.
+
+    USE:
+    import utils.user_interface as ui
+    _ui = ui.UserInterface()
+    _ui.print_heading_green(text='MY HEADER')
     '''
 
     def __init__(self):
@@ -78,8 +81,8 @@ class UserInterface(object):
         '''
         colourinit()
 
-        #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY
-        ui_config_file = os.path.join(site.getsitepackages()[1], 'utils',
+        #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY (SHOULD WORK FOR WIN AND LINUX)
+        ui_config_file = os.path.join(os.path.dirname(utils.__file__),
                                       'user_interface_config.json')
 
         self._cfg = config.loadconfig(filename=ui_config_file)
@@ -189,5 +192,3 @@ class UserInterface(object):
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['windws'].format(mtd, cls)
         self.print_error(text)
-
-ui = UserInterface()
