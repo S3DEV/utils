@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    registry.py
 
-Version:    0.0.1
+Version:    0.0.2
 
 Security:   NONE
 
@@ -29,13 +29,19 @@ UPDATE LOG:
 Date        Programmer      Version     Update
 09.10.17    M. Critchard    0.0.1       Written
 10.10.17    J. Berendt                  Extended header line length to 100 characters.
-                                        Added verion file and import.
-                                        pylint (10/10)
+                                        Added verion file and import. pylint (10/10)
+13.10.17    J. Berendt      0.0.2       BUG01: Error 'ImportError: cannot import name ui' thrown
+                                        when importing EHM.enviro
+                                        FIX01: As of utils v5.0.2, the ui class instantiation
+                                        shortcut has been removed from the
+                                        utils.user_interface.UserInterface() class.
+                                        Updated the user_interface import to:
+                                        import user_interface as ui; then instantiate the class.
 ------------------------------------------------------------------------------------------------'''
 
 import _winreg as wr
+import user_interface as ui
 
-from user_interface import ui
 from _version_registry import __version__
 
 #IGNORE
@@ -68,6 +74,9 @@ class Key(object):
     methods that can be used to interact with the values of the
     key.
     '''
+
+    #INSTANTIATE THE UserInterface CLASS
+    _ui = ui.UserInterface()
 
     def __init__(self, key):
         '''
@@ -106,10 +115,10 @@ class Key(object):
             else:
                 raise NotImplementedError
         except NotImplementedError:
-            ui.print_error_notimp()
+            self._ui.print_error_notimp()
             return None
         except WindowsError:
-            ui.print_error_windws()
+            self._ui.print_error_windws()
             return None
 
 
@@ -120,6 +129,9 @@ class Registry(object):
     methods that can be used to interact with the keys and values in
     the registry.
     '''
+
+    #INSTANTIATE THE UserInterface CLASS
+    _ui = ui.UserInterface()
 
     def __init__(self, computer_name, hkey):
         '''
@@ -155,7 +167,7 @@ class Registry(object):
         key = self._open_key(path, wr.KEY_READ)
         value = key.get_value(name)
         if (value is None) or (value.data != data):
-            ui.print_error_unexpd()
+            self._ui.print_error_unexpd()
         return value
 
     def create_key(self, path):
@@ -167,7 +179,7 @@ class Registry(object):
         try:
             return wr.CreateKey(self._hkey, path)
         except WindowsError:
-            ui.print_error_windws()
+            self._ui.print_error_windws()
             return None
 
     def delete_key(self, path):
@@ -181,7 +193,7 @@ class Registry(object):
         try:
             return wr.DeleteKey(self._hkey, path)
         except WindowsError:
-            ui.print_error_windws()
+            self._ui.print_error_windws()
             return None
 
     def _open_key(self, path, sam):
@@ -196,7 +208,7 @@ class Registry(object):
             key = Key(key)
             return key
         except WindowsError:
-            ui.print_error_windws()
+            self._ui.print_error_windws()
             return None
 
 # The root HKEY objects are created here.

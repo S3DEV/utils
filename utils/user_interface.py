@@ -42,6 +42,15 @@ Date        Programmer      Version     Update
                                         failed on Linux.
                                         FIX02: Updated the path to locate the config file to use
                                         'utils.__file__' as the starting location.
+                                        BUG03: When analysing EHM.enviro with pylint, this error
+                                        was caught:
+                                        '_Client._set_type: No value for argument 'text' in method
+                                        call'
+                                        On inspection, the utils.user_interface.print_error_enviro
+                                        method requires a 'text' argument.
+                                        FIX03: The text argument is old/residual code and have been
+                                        removed as the text for this error is pulled form the
+                                        config file.  pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -141,7 +150,7 @@ class UserInterface(object):
         reporterror.reporterror(text)
         print(Style.RESET_ALL)
 
-    def print_error_enviro(self, text):
+    def print_error_enviro(self):
         '''
         PURPOSE:
         This method prints red text on a black background. It uses the
