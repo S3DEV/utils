@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.0.4
+Version:    0.1.0
 
 Security:   NONE
 
@@ -51,11 +51,15 @@ Date        Programmer      Version     Update
                                         FIX03: The text argument is old/residual code and have been
                                         removed as the text for this error is pulled form the
                                         config file.  pylint (10/10)
+16.10.17    J. Berendt      0.1.0       Added a print_alert() method which prints console text in
+                                        red.
+                                        Updated config file location to use __file__ rather than
+                                        utils.__file__, and wrapped in the realpath() function.
+                                        pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
 import inspect
-import utils
 import reporterror
 import config
 
@@ -91,7 +95,7 @@ class UserInterface(object):
         colourinit()
 
         #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY (SHOULD WORK FOR WIN AND LINUX)
-        ui_config_file = os.path.join(os.path.dirname(utils.__file__),
+        ui_config_file = os.path.join(os.path.realpath(os.path.dirname(__file__)),
                                       'user_interface_config.json')
 
         self._cfg = config.loadconfig(filename=ui_config_file)
@@ -138,6 +142,15 @@ class UserInterface(object):
         This method prints yellow text on a black background.
         '''
         print(Fore.LIGHTYELLOW_EX +
+              text +
+              Style.RESET_ALL)
+
+    def print_alert(self, text):
+        '''
+        PURPOSE:
+        This method prints red text on a black background.
+        '''
+        print(Fore.LIGHTRED_EX +
               text +
               Style.RESET_ALL)
 

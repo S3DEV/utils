@@ -2,8 +2,7 @@
 Program:    config
 Version:    0.0.4
 Py Ver:     2.7
-Purpose:    Small helper program designed to load a program's config
-            file.
+Purpose:    Small helper program designed to load a program's config file.
 
 Dependents: os
             sys
@@ -12,8 +11,10 @@ Dependents: os
 Developer:  J. Berendt
 Email:      support@73rdstreetdevelopment.co.uk
 
-Use:        >>> import utils.config
-            >>> CONFIG = config.loadconfig()
+Use:        >>> import utils.config as config
+            >>> global CFG
+            >>> CFG = config.loadconfig()
+            >>> my_param = CFG['my_param']
 
 ---------------------------------------------------------------------------------------------------
 UPDATE LOG:
@@ -35,9 +36,9 @@ Date        Programmer      Version     Update
 14.05.17    J. Berendt      0.0.4       Updated to sit within the utils library.
                                         Incomplete code warning: added filename parameter to
                                         the os.path.dirname check.
-                                        Simplified __fromjson function. pylint (10/10)
+                                        Simplified _fromjson function.
                                         Renamed function/method names to replace double leading
-                                        underscore with single underscore.
+                                        underscore with single underscore. pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -82,10 +83,12 @@ def loadconfig(filename='config.json', devmode=False):
         else:
 
             #ASSIGN DIRECTORIES
+            #USE THE PROGRAM'S DIRECTORY AS ROOT FOR THE CONFIG FILE
             progdir = os.path.dirname(os.path.realpath(sys.argv[0]))
+            #IF THE PROGRAM DIR IS NOT AVAILABLE (NOT USED) USE CWD
             curdir = os.getcwd()
 
-            #TEST AND STORE PROGRAM DIRECTORY
+            #TEST PROGRAM DIR >> USE CWD IF NO PROGRAM DIR
             path_base = progdir if sys.argv[0] != '' else curdir
 
         #CONSOLIDATE PATH AND FILENAME
@@ -95,7 +98,6 @@ def loadconfig(filename='config.json', devmode=False):
 
         #ASSIGN PASSED PATH/FILENAME TO TESTED VARIABLE
         fullpath = filename
-
 
     #TEST IF THE FILE EXISTS
     if os.path.exists(fullpath):
@@ -107,7 +109,6 @@ def loadconfig(filename='config.json', devmode=False):
 
         #USER NOTIFICATION
         raise UserWarning('The config file (%s) could not be found.' % (fullpath))
-        return None
 
 
 #-----------------------------------------------------------------------

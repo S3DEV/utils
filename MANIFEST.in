@@ -1,0 +1,3 @@
+include LICENSE
+recursive-include utils *.json
+recursive-include / *.html

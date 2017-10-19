@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    setup.py
-Version:    0.1.0
+Version:    0.1.1
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
 
@@ -29,10 +29,13 @@ Date        Programmer      Version     Update
 11.10.17    J. Berendt      0.1.0       Overhaul of this setup file IAW:
                                         https://setuptools.readthedocs.io/en/latest/setuptools.html
                                         This file now makes use of the package_data parameter.
+17.10.17    J. Berendt      0.1.1       Removed unneeded / commented code.
+                                        Minor formatting updates.
+                                        Removed sys and os imports.
+                                        Removed use of data_files; replaced with MANIFEST.in.
+                                        pylint (10/10)
 -------------------------------------------------------------------------------------------------'''
 
-import sys
-import os
 from setuptools import setup, find_packages
 from utils._version import __version__
 
@@ -46,13 +49,15 @@ AUTHOR_EMAIL    = 'support@73rdstreetdevelopment.co.uk'
 URL             = 'https://github.com/s3dev/utils_x.x.x'
 LICENSE         = 'MIT'
 
-#GET SYS.PREFIX PATH >> MODIFY TO INCLUDE PACKAGE DIR (FOR DATA_FILES)
-# INST_RAW    = 'c:/anaconda2/lib/site-packages/' + PACKAGE
-# PREFIX      = os.path.realpath(sys.prefix).lower()
-# INST_ROOT   = os.path.realpath(INST_RAW).lower().replace(PREFIX, '.')
+#PACKAGE REQUIREMENTS
+REQUIRES        = ['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly',
+                   'mysql-connector==2.1.4', 'colorama']
+#PACKAGE DATA FILES
+PACKAGE_DATA    = {'utils':['*.json']}
+
 
 #DEFINE PARAMETERS (LIST PROGRAM DEPENDENCIES IN INSTALL_REQUIRES PARAMETER)
-params = dict(name=PACKAGE,
+PARAMS = dict(name=PACKAGE,
               version=VERSION,
               platforms=PLATFORMS,
               description=DESC,
@@ -61,24 +66,21 @@ params = dict(name=PACKAGE,
               url=URL,
               license=LICENSE,
               packages=find_packages(),
-              install_requires=['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly',
-                                'mysql-connector==2.1.4', 'colorama'],
-              package_data={'utils':['*.json']},
-              data_files=[('', ['LICENSE', 'README.md', 'README.html'])])
+              install_requires=REQUIRES)
+            #   package_data=PACKAGE_DATA)
 
 #SETUP PARAMETERS
-setup(name=params['name'],
-      version=params['version'],
-      platforms=params['platforms'],
-      description=params['description'],
-      author=params['author'],
-      author_email=params['author_email'],
-      maintainer=params['author'],
-      maintainer_email=params['author_email'],
-      url=params['url'],
-      license=params['license'],
-      packages=params['packages'],
-      install_requires=params['install_requires'],
-      package_data=params['package_data'],
-      data_files=params['data_files']
-      )
+setup(name=PARAMS['name'],
+      version=PARAMS['version'],
+      platforms=PARAMS['platforms'],
+      description=PARAMS['description'],
+      author=PARAMS['author'],
+      author_email=PARAMS['author_email'],
+      maintainer=PARAMS['author'],
+      maintainer_email=PARAMS['author_email'],
+      url=PARAMS['url'],
+      license=PARAMS['license'],
+      packages=PARAMS['packages'],
+      install_requires=PARAMS['install_requires'],
+      include_package_data=True)
+    #   package_data=PARAMS['package_data']

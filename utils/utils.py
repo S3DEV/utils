@@ -1,21 +1,8 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    4.0.0
+Version:    4.1.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
-
-Dependents: _version
-            cx_Oracle
-            datetime
-            imp
-            json
-            matplotlib
-            numpy
-            os
-            plotly
-            pyodbc
-            re
-            unidecode
 
 Comments:
 
@@ -124,13 +111,25 @@ Date        Programmer      Version     Update
                                         - This update aligns with the utils v5 update.
                                         Updated variables in fileexists() and direxists()  to
                                         lower case.  pylint (10/10)
+16.10.17    J. Berendt      4.1.0       Overhaul / re-structure for the dbconn_* functions.
+                                        - split each connection function into sub/reusable
+                                        functions
+                                        - enhanced error trapping / handling
+                                        - updated dbconn_oracle() and dbconn_sql() functions to
+                                        accept a JSON config file for db credentials.
+                                        - added user parameter (in parallel to existing userid
+                                        parameter), to the oracle and sql db connection functions.
+                                        pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
-#-----------------------------------------------------------------------
-#SET VERSION NUMBER
-from _version_utils import __version__
 import config
 import reporterror
+import user_interface
+from _version_utils import __version__
+
+
+#GLOBAL CONSTANTS / CLASS INSTANTIATIONS
+_UI = user_interface.UserInterface()
 
 #-----------------------------------------------------------------------
 #METHOD USED FOR DEPLOYMENT TESTING
@@ -451,6 +450,206 @@ def format_exif_date(datestring):
 
 
 #-----------------------------------------------------------------------
+#FUNCTION TO VERIFY THE REQUIRED FIELDS ARE PROVIDED IN THE CONFIG FILE
+#USER IS PROMPTED FOR ALL VALUES NOT PROVIDED
+def _dbconn_fields(dbtype, fields, filename):
+
+    '''
+    PURPOSE:
+    This is a general-purpose function used to extract database
+    credentials from a passed JSON config file.
+
+    DESIGN:
+    Using the passed file, the config key/values are loaded into a
+    dictionary which is iterated, testing if the expected fields are
+    present.  If an expected field is not present, the user is prompted
+    for the value.
+
+    The completed credential dictionary is then returned.
+    '''
+
+    try:
+        #INITIALISE
+        creds = dict()
+
+        #LOAD CONNECTION DETAILS FROM CONFIG FILE
+        conf = config.loadconfig(filename=filename)
+
+        #LOOP THROUGH EXPECTED KEYS
+        for key in fields:
+            #TEST KEY EXISTS IN CONFIG FILE
+            if conf.has_key(key):
+                #ADD EXISTING VALUE TO CREDENTIAL DICT (USED FOR CONNECTION)
+                creds[key] = conf[key]
+            else:
+                #PROMPT FOR VALUE >> ADD TO CREDENTIAL DICT
+                creds[key] = raw_input('please enter the %s %s: ' % (dbtype, key))
+
+        #RETURN DICTIONARY OF CREDENTIALS
+        return creds
+
+    except Exception as err:
+        #USER NOTIFICATION
+        _UI.print_alert('\nAn error occurred while checking the database credentials in the '
+                        'config file.\nFilename used: %s' % filename)
+        _UI.print_error(err)
+        return None
+
+
+#-----------------------------------------------------------------------
+#FUNCTION BUILDS A DICT FROM DB CREDENTIAL PARAMETERS
+def _dbconn_params(dbtype, **params):
+
+    '''
+    PURPOSE:
+    This is a general-purpose function used to test if the provided
+    database credential parameters have been populated.
+
+    DESIGN:
+    This function iterates over the passed credential fields (passed as
+    **kwargs), and tests each field for a None value.  If a None value
+    is found, the user is prompted for the credential.
+
+    The completed credential dictionary is then returned.
+    '''
+
+    try:
+        #LOOP THROUGH KEYS AND GET MISSING VALUES
+        for key, value in params.items():
+            #TEST VALUE
+            if params[key] is None:
+                #PROMPT USER FOR VALUE
+                params[key] = raw_input('Please enter the %s for the %s connection: ' %
+                                        (key, dbtype))
+
+        #RETURN COMPLETED DICTIONARY
+        return params
+
+    except Exception as err:
+        #USER NOTIFICATION
+        _UI.print_alert('\nAn error occurred while checking the passed database credentials.')
+        _UI.print_error(err)
+        return None
+
+
+#-----------------------------------------------------------------------
+#FUNCTION MAKES AN ORACLE DB CONNECTION AND RETURN THE CONN/CUR OBJECTS
+def _dbconn_oracle_conn(creds):
+
+    '''
+    PURPOSE:
+    This function is used to make a connection to an Oracle database.
+
+    DESIGN:
+    Using a passed credential dictionary, an Oracle connection string
+    is built and used for connection.
+
+    Upon successful connection, the function returned the db connection
+    and cursor objects, wrapped in a dictionary.
+    '''
+
+    import cx_Oracle
+
+    try:
+        #BUILD CONNECTION STRING
+        connstring = '%s/%s@%s' % (creds['user'], creds['password'], creds['host'])
+
+        #MAKE THE CONNECTION >> GET CURSOR OBJECT
+        connection = cx_Oracle.connect(connstring)
+        cursor = connection.cursor()
+
+        #RETURN THE CONN/CUR OBJECTS IN A DICT
+        return dict(conn=connection, cur=cursor)
+
+    except Exception as err:
+        #ALERT USER TO CONNECTION ERROR
+        _UI.print_alert('\nThe database connection failed for '
+                        '(host: %s, user name: %s, pw: xxx...%s)' %
+                        (creds['host'], creds['user'], creds['password'][-3:]))
+        _UI.print_error(err)
+
+
+#-----------------------------------------------------------------------
+#FUNCTION MAKES AN ORACLE DB CONNECTION AND RETURN THE CONN/CUR OBJECTS
+def _dbconn_mysql_conn(creds):
+
+    '''
+    PURPOSE:
+    This function is used to make a connection to a MySQL database.
+
+    DESIGN:
+    The passed credential dictionary is passed directly into the
+    mysql.connect function as a set of **kwargs.
+
+    Upon successful connection, the function returned the db connection
+    and cursor objects, wrapped in a dictionary.
+    '''
+
+    import mysql.connector as sql
+
+    try:
+        #CREATE CONNECTION / CURSOR OBJECTS
+        connection = sql.connect(**creds)
+        cursor = connection.cursor()
+
+        #RETURN THE CONN/CUR OBJECTS IN A DICT
+        return dict(conn=connection, cur=cursor)
+
+    except Exception as err:
+        #ALERT USER TO CONNECTION ERROR
+        _UI.print_alert('\nThe database connection failed for '
+                        '(host: %s, user name: %s, pw: xxx...%s)' %
+                        (creds['host'], creds['user'], creds['password'][-3:]))
+        _UI.print_error(err)
+
+
+#-----------------------------------------------------------------------
+#FUNCTION MAKES AN ORACLE DB CONNECTION AND RETURN THE CONN/CUR OBJECTS
+def _dbconn_sql_conn(creds):
+
+    '''
+    PURPOSE:
+    This function is used to make a connection to a SQL Server database.
+
+    DESIGN:
+    The database credentials are passed into the pyodbc library, which
+    searches for the SQL Server driver, via the getdrivername()
+    function.
+
+    Upon successful connection, the function returned the db connection
+    and cursor objects, wrapped in a dictionary.
+    '''
+
+    import pyodbc
+
+    try:
+        #BUILD CONNECTION STRING >> CONNECT
+        connection = pyodbc.connect('Driver={%s};'
+                                    'Server=%s;'
+                                    'Database=%s;'
+                                    'UID=%s;'
+                                    'PWD=%s;' %
+                                    (getdrivername('SQL Server.*'),
+                                     creds['server'],
+                                     creds['database'],
+                                     creds['user'],
+                                     creds['password']))
+
+        #CREATE CURSOR OBJECT
+        cursor = connection.cursor()
+
+        #STORE RESULT IN DICTIONARY
+        return dict(conn=connection, cur=cursor)
+
+    except Exception as err:
+        #ALERT USER TO CONNECTION ERROR
+        _UI.print_alert('\nThe database connection failed for '
+                        '(host: %s, user name: %s, pw: xxx...%s)' %
+                        (creds['host'], creds['user'], creds['password'][-3:]))
+        _UI.print_error(err)
+
+
+#-----------------------------------------------------------------------
 #FUNCTION DESIGNED TO RETURN DB OBJECTS FOR A SQLITE DATABASE
 def dbconn_sqlite(db_path):
 
@@ -493,15 +692,18 @@ def dbconn_sqlite(db_path):
         reporterror.reporterror(err)
 
 
+
 #-----------------------------------------------------------------------
 #FUNCTION DESIGNED CREATE AN ORACLE DB CONN; USER PROMPTED FOR DETAILS.
-def dbconn_oracle(host=None, userid=None, password=None):
+def dbconn_oracle(host=None, user=None, userid=None, password=None, from_file=False,
+                  filename=None):
 
     '''
     DESIGN:
     Function designed to create a connection to an Oracle database
-    using the provided login details.  If a login detail is not
-    provided, the user is prompted; which can be used as a security
+    using the provided login details, or directly from a config file.
+    If a login detail is not provided, the user is prompted; which can
+    be used as a security
     feature.
 
     The connection is tested.  If successful, the connection and
@@ -516,52 +718,73 @@ def dbconn_oracle(host=None, userid=None, password=None):
     PARAMETERS:
         - host (default=None)
           database host; or database name
+        - user (default=None)
+          user name, or schema name
         - userid (default=None)
-          user id; or schema name
+          same as 'user' parameter (both are not needed)
         - password (default=None)
           just what it says on the tin  :-)
+        - from_file (default=False)
+          boolean flag instructing the function to use the provided
+          config (JSON) file for connection details
+          valid keys:
+              - host, user, password
+        - filename (default=None)
+          file path and name of the JSON file containing the connection
+          details
 
     DEPENDENCIES:
     - cx_Oracle
 
     USE:
     > import utils.utils as u
-    > dbo = u.dbconn_oracle(host, userid, password)
+    > dbo = u.dbconn_oracle(host='myhost', userid='myuser',
+                            password='mypass')
     > conn = dbo['conn']
     > cur = dbo['cur']
+
+    USE: CONNECTION DETAILS FROM JSON:
+    > import utils.utils as u
+    > dbo = u.dbconn_oracle(from_file=True, filename='db_config.json')
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+
     '''
 
-    import cx_Oracle as o
-
-    #TEST FOR PASSED ARGUMENTS >> PROMPT FOR DATABASE USER CREDENTIALS
-    if host is None: host = raw_input('oracle host name: ')
-    if userid is None: userid = raw_input('oracle userid: ')
-    if password is None: password = raw_input('oracle password (for %s): ' % userid)
-
-    #BUILD CONNECTION STRING
-    connstring = '%s/%s@%s' % (userid, password, host)
-
     try:
-        #CREATE CONNECTION / CURSOR OBJECTS
-        connection = o.connect(connstring)
-        cursor = connection.cursor()
+        #INITIALISE
+        creds = dict()
+        dbtype = 'oracle'
 
-        #STORE RESULT IN DICTIONARY
-        output = dict(conn=connection, cur=cursor)
+        #TEST IF CONFIG FILE IS USED
+        if from_file:
+            #CONFIG KEYS TO CHECK
+            db_keys = ['host', 'user', 'password']
+
+            #VERIFY REQUIRED FIELD EXIST IN CONFIG FILE
+            creds = _dbconn_fields(dbtype=dbtype, fields=db_keys, filename=filename)
+
+        else:
+            #COMBINE USER AND USERID
+            user = user if user is not None else userid
+
+            #TEST PASSED PARAMETERS >> WRAP IN DICTIONARY
+            creds = _dbconn_params(dbtype=dbtype, host=host, user=user, password=password)
+
+        #TEST A VALID CREDENTIAL FILE WAS BUILT
+        if creds is not None:
+            #MAKE THE CONNECTION >> GET THE CONN/CUR OBJECTS
+            return _dbconn_oracle_conn(creds=creds)
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('The database connection failed for ' \
-                         '(host: %s, userid: %s, pw: xxx...%s)\n%s' % \
-                         (host, userid, password[-3:], err))
-
-    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
-    return output
+        _UI.print_alert('\nAn error occurred while connecting to the Oracle database.')
+        _UI.print_error(err)
 
 
 #-----------------------------------------------------------------------
 #FUNCTION DESIGNED CREATE A MYSQL DB CONN; USER PROMPTED FOR DETAILS.
-def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306,
+def dbconn_mysql(host=None, user=None, password=None, database=None, port=3306,
                  from_file=False, filename=None):
 
     '''
@@ -588,7 +811,7 @@ def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306
     PARAMETERS:
         - host (default=None)
           IP address or machine name of the host or database server
-        - userid (default=None)
+        - user (default=None)
           user name used to authenticate
         - password (default=None)
           just what it says on the tin  :-)
@@ -599,6 +822,8 @@ def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306
         - from_file (default=False)
           boolean flag instructing the function to use the provided
           config (JSON) file for connection details
+          valid keys:
+              - user, password, database, host, port
         - filename (default=None)
           file path and name of the JSON file containing the connection
           details
@@ -609,7 +834,7 @@ def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306
 
     USE: PASSED CONNECTION DETAILS:
     > import utils.utils as u
-    > dbo = u.dbconn_mysql(host, userid, password, database)
+    > dbo = u.dbconn_mysql(host, user, password, database)
     > conn = dbo['conn']
     > cur = dbo['cur']
 
@@ -620,75 +845,123 @@ def dbconn_mysql(host=None, userid=None, password=None, database=None, port=3306
     > cur = dbo['cur']
     '''
 
-    import mysql.connector as sql
-
-    #------------------------
-    # GET CONNECTION DETAILS
-    #------------------------
     try:
-
         #INITIALISE
         creds = dict()
-        output = dict()
+        dbtype = 'mysql'
 
         #TEST IF CONFIG FILE IS USED
         if from_file:
-            #SET KEYS TO CHECK
+            #CONFIG KEYS TO CHECK
             db_keys = ['user', 'password', 'database', 'host', 'port']
 
-            #LOAD CONNECTION DETAILS FROM CONFIG FILE
-            conf = config.loadconfig(filename=filename)
-
-            #LOOP THROUGH EXPECTED KEYS
-            for key in db_keys:
-                #TEST KEY EXISTS IN CONFIG FILE
-                if conf.has_key(key):
-                    #ADD EXISTING VALUE TO CREDENTIAL DICT (USED FOR CONNECTION)
-                    creds[key] = conf[key]
-                else:
-                    #PROMPT FOR VALUE >> ADD TO CREDENTIAL DICT
-                    creds[key] = raw_input('please enter the mysql %s: ' % key)
+            #VERIFY REQUIRED FIELD EXIST IN CONFIG FILE
+            creds = _dbconn_fields(dbtype=dbtype, fields=db_keys, filename=filename)
 
         else:
-            #TEST FOR PASSED ARGUMENTS >> PROMPT IF A PARAMETER IS MISSING / BLANK
-            if host is None: host = raw_input('mysql host name: ')
-            if userid is None: userid = raw_input('myql userid: ')
-            if password is None: password = raw_input('mysql password (for %s): ' % userid)
-            if database is None: database = raw_input('mysql database to use (on %s): ' % host)
-            if bool(port) is False: port = int(raw_input('mysql port (for %s on %s), as integer: '
-                                                         % (database, host)))
+            #TEST PASSED PARAMETERS >> WRAP IN DICTIONARY
+            creds = _dbconn_params(dbtype=dbtype, host=host, user=user, password=password,
+                                   database=database, port=port)
 
-            #BUILD DICTIONARY TO PASS INTO CONNECTIONS
-            creds = dict(user=userid,
-                         password=password,
-                         database=database,
-                         host=host,
-                         port=port)
-
-    except Exception as err:
-        #USER NOTIFICATION
-        reporterror.reporterror(error=err)
-
-
-    #---------------------
-    # MAKE THE CONNECTION
-    #---------------------
-    try:
-        #CREATE CONNECTION / CURSOR OBJECTS
-        connection = sql.connect(**creds)
-        cursor = connection.cursor()
-
-        #STORE RESULT IN DICTIONARY
-        output = dict(conn=connection, cur=cursor)
+        #TEST A VALID CREDENTIAL FILE WAS BUILT
+        if creds is not None:
+            #MAKE THE CONNECTION >> GET THE CONN/CUR OBJECTS
+            return _dbconn_mysql_conn(creds=creds)
 
     except Exception as err:
         #ALERT USER TO CONNECTION ERROR
-        raise ValueError('The database connection failed for ' \
-                         '(host: %s, userid: %s, pw: xxx...%s)\n%s' % \
-                         (creds['host'], creds['user'], creds['password'][-3:], err))
+        _UI.print_alert('\nAn error occurred while connecting to the MySQL database.')
+        _UI.print_error(err)
 
-    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
-    return output
+
+#-----------------------------------------------------------------------
+#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR
+#DETAILS.
+def dbconn_sql(server=None, database=None, userid=None, user=None, password=None,
+               from_file=False, filename=None):
+
+    '''
+    DESIGN:
+    Function designed to create a connection to a SQL Server database
+    using the provided login parameters, or directly froma config file.
+    If a login detail is not provided, the user is prompted; which can
+    be used as a security
+    feature.
+
+    The connection is tested.  If successful, the connection and cursor
+    objects are returned to the calling program, as a dictionary.
+
+    conn = [the connection object]
+    cur  = [the cursor object]
+
+    NOTE: To prompt for login details, leave the argument(s) blank.
+
+    PARAMETERS:
+        - server (default=None)
+          name of the server on which the database lives
+        - database (default=None)
+          name of the database to which you're connecting
+        - user (default=None)
+          just what it says on the tin
+        - userid (default=None)
+          same as 'user' parameter (both are not needed)
+        - password (default=None)
+          again, just what it says on the tin  :-)
+        - from_file (default=False)
+          boolean flag instructing the function to use the provided
+          config (JSON) file for connection details
+          valid keys:
+              - server, database, user, password
+        - filename (default=None)
+          file path and name of the JSON file containing the connection
+          details
+
+    DEPENDENCIES:
+    - pyodbc
+
+    USE:
+    > import utils.utils as u
+    > dbo = u.dbconn_sql(server, database, user, password)
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+
+    USE: CONNECTION DETAILS FROM JSON:
+    > import utils.utils as u
+    > dbo = u.dbconn_sql(from_file=True, filename='db_config.json')
+    > conn = dbo['conn']
+    > cur = dbo['cur']
+    '''
+
+    try:
+        #INITIALISE
+        creds = dict()
+        dbtype = 'sql_server'
+
+        #COMBINE USER AND USERID
+        user = user if user is not None else userid
+
+        #TEST IF CONFIG FILE IS USED
+        if from_file:
+            #CONFIG KEYS TO CHECK
+            db_keys = ['server', 'database', 'user', 'password']
+
+            #VERIFY REQUIRED FIELD EXIST IN CONFIG FILE
+            creds = _dbconn_fields(dbtype=dbtype, fields=db_keys, filename=filename)
+
+        else:
+            #TEST PASSED PARAMETERS >> WRAP IN DICTIONARY
+            creds = _dbconn_params(dbtype=dbtype, server=server, database=database,
+                                   user=user, password=password)
+
+        #TEST A VALID CREDENTIAL FILE WAS BUILT
+        if creds is not None:
+            #MAKE THE CONNECTION >> GET THE CONN/CUR OBJECTS
+            return _dbconn_sql_conn(creds=creds)
+
+    except Exception as err:
+        #ALERT USER TO CONNECTION ERROR
+        _UI.print_alert('\nAn error occurred while connecting to the SQL Server database.')
+        _UI.print_error(err)
 
 
 #-----------------------------------------------------------------------
@@ -782,82 +1055,6 @@ def testimport(module_name):
         print '\nSorry ... the (%s) library/module is not installed.' % (module_name)
 
     return found
-
-
-#-----------------------------------------------------------------------
-#FUNCTION DESIGNED CREATE A SQL SERVER DB CONN; USER PROMPTED FOR
-#DETAILS.
-def dbconn_sql(server=None, database=None, userid=None, password=None):
-
-    '''
-    DESIGN:
-    Function designed to create a connection to a SQL Server database
-    using the provided login parameters.  If a login detail is not
-    provided, the user is prompted; which can be used as a security
-    feature.
-
-    The connection is tested.  If successful, the connection and cursor
-    objects are returned to the calling program, as a dictionary.
-
-    conn = [the connection object]
-    cur  = [the cursor object]
-
-    NOTE: To prompt for login details, leave the argument(s) blank.
-
-    PARAMETERS:
-        - server (default=None)
-          name of the server on which the database lives
-        - database (default=None)
-          name of the database to which you're connecting
-        - userid (default=None)
-          just what it says on the tin
-        - password (default=None)
-          again, just what it says on the tin  ;-)
-
-    DEPENDENCIES:
-        - pyodbc
-
-    USE:
-    > import utils.utils as u
-    > dbo = u.dbconn_sql(server, database, userid, password)
-    > conn = dbo['conn']
-    > cur = dbo['cur']
-    '''
-
-    import pyodbc
-
-    #TEST FOR PASSED ARGUMENTS >> PROMPT FOR DATABASE USER CREDENTIALS
-    if server is None: server = raw_input('sql server name: ')
-    if database is None: database = raw_input('sql database name: ')
-    if userid is None: userid = raw_input('sql userid: ')
-    if password is None: password = raw_input('sql password (for %s): ' % userid)
-
-    try:
-        #BUILD CONNECTION STRING >> CONNECT
-        connection = pyodbc.connect('Driver={%s};'
-                                    'Server=%s;'
-                                    'Database=%s;'
-                                    'UID=%s;'
-                                    'PWD=%s;' %
-                                    (getdrivername('SQL Server.*'), server, \
-                                                                    database, \
-                                                                    userid, \
-                                                                    password))
-
-        #CREATE CURSOR OBJECT
-        cursor = connection.cursor()
-
-        #STORE RESULT IN DICTIONARY
-        output = dict(conn=connection, cur=cursor)
-
-    except Exception as err:
-        #ALERT USER TO CONNECTION ERROR
-        raise ValueError('The database connection failed for ' \
-                         '(server: %s, userid: %s, pw: xxx...%s)\n%s' % \
-                         (server, userid, password[-3:], err))
-
-    #RETURN CONNECTION / CURSOR OBJECTS TO PROGAM
-    return output
 
 
 #-----------------------------------------------------------------------
