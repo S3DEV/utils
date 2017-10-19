@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.1.0
+Version:    0.1.1
 
 Security:   NONE
 
@@ -56,6 +56,8 @@ Date        Programmer      Version     Update
                                         Updated config file location to use __file__ rather than
                                         utils.__file__, and wrapped in the realpath() function.
                                         pylint (10/10)
+19.10.17    M. Critchard    0.1.1       Added print_error_intoor() to allow integer out of range
+                                        errors to be printed to the Windows CLI. pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -174,6 +176,19 @@ class UserInterface(object):
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['enviro'].format(mtd, cls)
+        self.print_error(text)
+
+    def print_error_intoor(self):
+        '''
+        PURPOSE:
+        This method prints red text on a black background. It uses the
+        stack and the config file to print a message for integer out
+        of range errors.
+        '''
+        stack = inspect.stack()
+        mtd = inspect.currentframe().f_back.f_code.co_name
+        cls = stack[1][0].f_locals['self'].__class__
+        text = self._cfg['intoor'].format(mtd, cls)
         self.print_error(text)
 
     def print_error_notimp(self):
