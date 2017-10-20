@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    4.1.0
+Version:    4.2.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -120,8 +120,11 @@ Date        Programmer      Version     Update
                                         - added user parameter (in parallel to existing userid
                                         parameter), to the oracle and sql db connection functions.
                                         pylint (10/10)
+20.10.17    J. Berendt      4.2.0       Added the getsitepackages() function.  pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
+import site
+import platform
 import config
 import reporterror
 import user_interface
@@ -140,6 +143,51 @@ def __test():
     Method used for testing only.
     '''
     print 'This is only a test.'
+
+
+#-----------------------------------------------------------------------
+#FUNCTION USED TO RETURN THE SITE PACKAGES DIRECTORY, BASED ON PLATFORM
+def getsitepackages():
+
+    '''
+    PURPOSE:
+    This function returns the directory path to site-packages based on
+    the platform.
+
+    DESIGN:
+    The function first uses the platform.system() function to get the
+    platform's base OS.  The OS is then tested and the site-packages
+    location is returned using the OS appropriate element from the
+    site.getsitepackages() list.
+
+    If the OS is not accounted for, or fails the test, a value of
+    'unknown' is returned.
+
+    RATIONALE:
+    The need for this function comes out of the observation there are
+    many (many!) different ways on stackoverflow (and other sites) to
+    get the location to which pip will install a package, and most of
+    the answers contradict each other.  Also, the site.getsitepackages()
+    function returns a list of two options (in all tested cases); and
+    the Linux / Windows paths are in different locations in this list.
+
+    So this function was written to help simplify matters ... hopefully.
+    '''
+
+    #GET PLATFORM
+    my_os = platform.system().lower()
+
+    #TEST PLATFORM >> GET SITE-PACKAGES DIRECTORY
+    if 'win' in my_os:
+        sitepkgs_dir = site.getsitepackages()[1]
+
+    elif 'lin' in my_os:
+        sitepkgs_dir = site.getsitepackages()[0]
+
+    else:
+        sitepkgs_dir= 'unknown'
+
+    return sitepkgs_dir
 
 
 #-----------------------------------------------------------------------

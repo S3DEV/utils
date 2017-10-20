@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    setup.py
-Version:    0.1.1
+Version:    0.2.0
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
 
@@ -34,10 +34,17 @@ Date        Programmer      Version     Update
                                         Removed sys and os imports.
                                         Removed use of data_files; replaced with MANIFEST.in.
                                         pylint (10/10)
--------------------------------------------------------------------------------------------------'''
+19.10.17    J. Berendt      0.2.0       Updated to use utils.get_datafiles() function for data
+                                        file collection.
+                                        Updated to re-include README and LICENCE files in install.
+------------------------------------------------------------------------------------------------'''
 
+import os
 from setuptools import setup, find_packages
+from utils.utils import getsitepackages
+from utils.get_datafiles import get_datafiles
 from utils._version import __version__
+
 
 #SETUP CONSTANTS
 PACKAGE         = 'utils'
@@ -48,13 +55,16 @@ AUTHOR          = 'J. Berendt'
 AUTHOR_EMAIL    = 'support@73rdstreetdevelopment.co.uk'
 URL             = 'https://github.com/s3dev/utils_x.x.x'
 LICENSE         = 'MIT'
+PACKAGE_ROOT    = os.path.join(os.path.realpath(os.path.dirname(__file__)), PACKAGE)
+SITE_PKGS       = os.path.join(getsitepackages(), PACKAGE)
 
 #PACKAGE REQUIREMENTS
 REQUIRES        = ['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'plotly',
                    'mysql-connector==2.1.4', 'colorama']
-#PACKAGE DATA FILES
-PACKAGE_DATA    = {'utils':['*.json']}
 
+#ADD DATA FILES
+DATA_FILES      = [(SITE_PKGS, ['LICENSE', 'README.html', 'README.md'])] + \
+                   get_datafiles(pkg_dir=PACKAGE_ROOT, exts=['.json'])
 
 #DEFINE PARAMETERS (LIST PROGRAM DEPENDENCIES IN INSTALL_REQUIRES PARAMETER)
 PARAMS = dict(name=PACKAGE,
@@ -66,8 +76,8 @@ PARAMS = dict(name=PACKAGE,
               url=URL,
               license=LICENSE,
               packages=find_packages(),
-              install_requires=REQUIRES)
-            #   package_data=PACKAGE_DATA)
+              install_requires=REQUIRES,
+              data_files=DATA_FILES)
 
 #SETUP PARAMETERS
 setup(name=PARAMS['name'],
@@ -82,5 +92,4 @@ setup(name=PARAMS['name'],
       license=PARAMS['license'],
       packages=PARAMS['packages'],
       install_requires=PARAMS['install_requires'],
-      include_package_data=True)
-    #   package_data=PARAMS['package_data']
+      data_files=PARAMS['data_files'])
