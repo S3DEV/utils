@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.1.1
+Version:    0.2.0
 
 Security:   NONE
 
@@ -10,8 +10,10 @@ Purpose:    This module provides an interface to the Windows Command Line Interp
             and reporting normal, alternative and abnormal behaviour. The following formats are
             provided:
                 - heading
-                  white text, cyan background
-                  white text, green background
+                  black text, cyan background
+                  black text, green background
+                  black text, white background
+                  black text, yellow background
                 - user input expected
                   white text, black backgroud
                 - normal behaviour
@@ -58,6 +60,16 @@ Date        Programmer      Version     Update
                                         pylint (10/10)
 19.10.17    M. Critchard    0.1.1       Added print_error_intoor() to allow integer out of range
                                         errors to be printed to the Windows CLI. pylint (10/10)
+30.10.17    M. Critchard    0.2.0       Changed formats with coloured backgrounds to have black
+                                        text instead of white because the white text appeared
+                                        washed-out when using certain CLI tools.
+                                        Added black text on white background and black text on
+                                        yellow background.
+                                        Added a 'padto' optional argument for formats with
+                                        backgrounds to allow the user to specify the width of the
+                                        colour across the screen.
+                                        Added print_blank_lines().
+                                        pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -111,22 +123,48 @@ class UserInterface(object):
         user_input = raw_input(prompt)
         return user_input
 
-    def print_heading_cyan(self, text):
+    def print_blank_lines(self, quantity=1):
         '''
         PURPOSE:
-        This method prints white text on a cyan background.
+        This method prints blank lines.
         '''
-        print(Back.CYAN + Fore.LIGHTWHITE_EX +
-              text +
+        for i in range(quantity):
+            print('')
+
+    def print_heading_cyan(self, text, padto=0):
+        '''
+        PURPOSE:
+        This method prints black text on a cyan background.
+        '''
+        print(Back.CYAN + Fore.BLACK +
+              self._pad(text, padto) +
               Style.RESET_ALL)
 
-    def print_heading_green(self, text):
+    def print_heading_green(self, text, padto=0):
         '''
         PURPOSE:
-        This method prints white text on a green background.
+        This method prints black text on a green background.
         '''
-        print(Back.GREEN + Fore.LIGHTWHITE_EX +
-              text +
+        print(Back.GREEN + Fore.BLACK +
+              self._pad(text, padto) +
+              Style.RESET_ALL)
+
+    def print_heading_white(self, text, padto=0):
+        '''
+        PURPOSE:
+        This method prints black text on a white background.
+        '''
+        print(Back.WHITE + Fore.BLACK +
+              self._pad(text, padto) +
+              Style.RESET_ALL)
+
+    def print_heading_yellow(self, text, padto=0):
+        '''
+        PURPOSE:
+        This method prints black text on a yellow background.
+        '''
+        print(Back.YELLOW + Fore.BLACK +
+              self._pad(text, padto) +
               Style.RESET_ALL)
 
     def print_normal(self, text):
@@ -229,3 +267,8 @@ class UserInterface(object):
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['windws'].format(mtd, cls)
         self.print_error(text)
+
+    def _pad(self, text, padto):
+        padding = padto - len(text.expandtabs())
+        text = text + (' ' * padding)
+        return text
