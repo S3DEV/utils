@@ -1,7 +1,7 @@
 
-# utils_5.3.0
+# utils_5.5.1
 ---
-The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, etc.
+The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
 
 Change log information is included in each module's header.
 
