@@ -1,14 +1,15 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.2.0
+Version:    0.3.0
 
 Security:   NONE
 
-Purpose:    This module provides an interface to the Windows Command Line Interpreter (CLI).
+Purpose:    This module provides an interface to the Win / Linux Command Line Interpreter (CLI).
             It contains a UserInterface class whose methods provide a standard way of getting data
             and reporting normal, alternative and abnormal behaviour. The following formats are
             provided:
+                - fully customisable messages and headers via the print_() method
                 - heading
                   black text, cyan background
                   black text, green background
@@ -26,6 +27,7 @@ Purpose:    This module provides an interface to the Windows Command Line Interp
 Developer:  M. Critchard
 
 Email:      mark.critchard@rolls-royce.com
+            jeremy.berendt@rolls-royce.com
 
 ---------------------------------------------------------------------------------------------------
 UPDATE LOG:
@@ -68,8 +70,20 @@ Date        Programmer      Version     Update
                                         Added a 'padto' optional argument for formats with
                                         backgrounds to allow the user to specify the width of the
                                         colour across the screen.
-                                        Added print_blank_lines().
-                                        pylint (10/10)
+                                        Added print_blank_lines().  pylint (10/10)
+29.11.17    J. Berendt      0.3.0       Added the print_() method which extends functionality of
+                                        the built-in print command, allowing user-defined
+                                        colouring and padding.
+                                        Updated the get_input() function to include appearance
+                                        configuration; i.e. text colouring and prompt control.
+                                        Updated the _pad() function to use the built-in
+                                        str.format() function for padding.
+                                        Converted all methods like print_normal() into simple /
+                                        standard wrappers for the new print_() method.
+                                        Addressed pylint error 'Method could be a function' by
+                                        removing the 'self' parameter and adding a @staticmethod
+                                        decorator; as no class parameters are changed by the
+                                        methods/functions.  pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -81,12 +95,9 @@ from _version_ui import __version__
 from colorama import init as colourinit
 from colorama import Fore, Back, Style
 
-#IGNORE AS METHODS ARE USED TO PRINT TO CONSOLE
-#pylint: disable=no-self-use
-#IGNORE SHORTCUT TO CLASS INSTANTIATION
-#pylint: disable=invalid-name
 
 class UserInterface(object):
+
     '''
     PURPOSE:
     This class encapsulates the Windows / Linux Command Line Interpreter
@@ -100,108 +111,211 @@ class UserInterface(object):
     '''
 
     def __init__(self):
+
         '''
         PURPOSE:
-        This constructor initialises colorama, which colours output to
-        the CLI. It also reads the config file, which is used
-        throughout the class.
+        This constructor initialises colorama, which enables the user
+        to print coloured text to the CLI. It also reads the config
+        file, which is used throughout the class.
+
+        COLORAMA BACKGROUND:
+        Colorama is initialised here to 'strip ANSI characters from
+        stdout and convert them into the equivalent win32 calls'; per
+        Jonathan Hartley, author of Colorama.
+
+        The Win32 console (excluding *some* versions of Win10) does not
+        support ANSI escape sequences, and therefore simply printing
+        the escape sequence to the native Win CLI with the text does
+        not work.  So we use Colorama for the low-level win32 work.
         '''
+
+        #COLORAMA INITIALISATION
         colourinit()
 
         #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY (SHOULD WORK FOR WIN AND LINUX)
         ui_config_file = os.path.join(os.path.realpath(os.path.dirname(__file__)),
                                       'user_interface_config.json')
-
+        #LOAD CONFIG FILE
         self._cfg = config.loadconfig(filename=ui_config_file)
 
-    def get_input(self, prompt):
-        '''
-        PURPOSE:
-        This method prompts the user for input and then returns the
-        user's input to the caller.
-        '''
-        user_input = raw_input(prompt)
-        return user_input
+        #BUILD REFERENCE DICTS OF COLORAMA FORE / BACK / STYLE
+        self._fore  = self._build_color_dict(class_=Fore)
+        self._back  = self._build_color_dict(class_=Back)
+        self._style = self._build_color_dict(class_=Style)
 
-    def print_blank_lines(self, quantity=1):
+
+    def print_(self, text, fore='white', back='black', style='normal', h_pad=0, v_pad=0):
+
         '''
         PURPOSE:
-        This method prints blank lines.
+        This method extends the functionality of the built-in print
+        command by adding the options for text colouring and padding.
+
+        DESIGN:
+        The user can pass a text string for output text colour,
+        background colour and style, along with horizontal and vertical
+        padding.
+
+        The colour and style strings are referenced against colorama's
+        .Fore() .Back() and .Style() classes (via a dictionary built
+        in this class' constructor) - where the ANSI escape sequences
+        are extracted and added to the output text string.
+
+        In addition to colour, horizontal and vertical padding are
+        available.
+
+        For further detail, refer to the PARAMETERS section
+        of this docstring, and refer to the ACCEPTED OPTIONS section for
+        each string parameter's available options.
+
+        PARAMETERS:
+        - text
+        The text to be printed to the console.
+        - fore (default='white')
+        The output text's colour, as a string.
+        - back (default='black')
+        The output text's background colour, as a string.
+        - style (default='normal')
+        The 'normal' style selects the 8 original foreground colours
+        (SGR 30-37).
+        The 'bright' style provides access to the 8 additional
+        foreground colours (SGR 90-97).
+        - h_pad (default=0)
+        The amount of horizontal padding, in characters.
+        This option will increase the field size to the value of h_pad
+        and add (n) blank characters of background colour after the
+        text string.
+        If greater than the number of text characters, colour will
+        extend past the end of the text.  Note: the h_pad value is a
+        *field size* value, *not* the number of spaces past the end of
+        the text string.
+        - v_pad (default=0)
+        The amount of vertical padding, in lines.
+        This option will add (n) blank lines of backgound colour above
+        and below the text string - acting like a banner.  The banner
+        will extend to the number of spaces specified in the h_pad
+        parameter.
+
+        ACCEPTED OPTIONS:
+        - fore / back
+        black, blue, cyan, green, magenta, red, white, yellow
+        - style
+        bright, dim, normal
         '''
-        for i in range(quantity):
-            print('')
+
+        #DECODE COLOR FROM STRING TO ANSI SEQUENCE
+        _fore   = self._fore[fore.lower()]
+        _back   = self._back[back.lower()]
+        _style  = self._style[style.lower()]
+
+        #TEST FOR HORIZONTAL PADDING
+        if h_pad > 0:
+            #PAD TEXT
+            text = self._pad(text=text, padto=h_pad)
+            #CREATE SPACES FOR V-PADDING
+            spaces = self._pad(text='', padto=h_pad)
+        else:
+            #CREATE SPACES FOR V-PADDING
+            spaces = self._pad(text='', padto=len(text))
+
+        #TEST FOR UPPER AND LOWER PADDING
+        if v_pad > 0:
+            #ADD BLANK LINE ABOVE BANNER
+            print ''
+            for i in range(v_pad):
+                #PRINT UPPER PAD (N) TIMES
+                print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
+            #PRINT MESSAGE & ADD SPACE BEFORE TEXT TO BRING OFF CONSOLE WALL
+            print('%s%s%s %s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
+            for i in range(v_pad):
+                #PRINT LOWER PAD (N) TIMES
+                print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
+            #ADD BLANK LINE BELOW BANNER
+            print ''
+        else:
+            #PRINT MESSAGE
+            print('%s%s%s%s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
+
+
+    def get_input(self, prompt, fore='white', back='black', style='normal',
+                  ending_char=':', add_space=True):
+
+        '''
+        PURPOSE:
+        This method extends the built-in raw_input() user prompt by
+        adding appearance control and text colouring through colorama.
+
+        Like the raw_input() function, the user's input is returned to
+        the caller.
+
+        PARAMETERS:
+        - prompt
+        The user prompt text to be displayed.
+        - fore (default='white')
+        The output text's colour, as a string.
+        - back (default='black')
+        The output text's background colour, as a string.
+        - style (default='normal')
+        The 'normal' style selects the 8 original foreground colours
+        (SGR 30-37).
+        The 'bright' style provides access to the 8 additional
+        foreground colours (SGR 90-97).
+        - ending_char (default=':')
+        Character to be added to the end of the prompt.
+        - add_space (default=True)
+        Add a space separator between the prompt and the user's
+        input.
+
+        ACCEPTED OPTIONS:
+        - fore / back
+        black, blue, cyan, green, magenta, red, white, yellow
+        - style
+        bright, dim, normal
+        '''
+
+        #DECODE COLOR FROM STRING TO ANSI SEQUENCE
+        _fore   = self._fore[fore.lower()]
+        _back   = self._back[back.lower()]
+        _style  = self._style[style.lower()]
+
+        #TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
+        space = ' ' if add_space is True else ''
+
+        #BUILD THE PROMPT STRING
+        prompt = '%s%s%s%s%s%s%s' % (_fore, _back, _style, prompt, ending_char,
+                                     Style.RESET_ALL, space)
+
+        #PROMPT USER AND RETURN INPUT TO THE CALLER
+        return raw_input(prompt)
+
 
     def print_heading_cyan(self, text, padto=0):
         '''
         PURPOSE:
         This method prints black text on a cyan background.
         '''
-        print(Back.CYAN + Fore.BLACK +
-              self._pad(text, padto) +
-              Style.RESET_ALL)
+        self.print_(text=text, fore='black', back='cyan', h_pad=padto)
 
     def print_heading_green(self, text, padto=0):
         '''
         PURPOSE:
         This method prints black text on a green background.
         '''
-        print(Back.GREEN + Fore.BLACK +
-              self._pad(text, padto) +
-              Style.RESET_ALL)
+        self.print_(text=text, fore='black', back='green', h_pad=padto)
 
     def print_heading_white(self, text, padto=0):
         '''
         PURPOSE:
         This method prints black text on a white background.
         '''
-        print(Back.WHITE + Fore.BLACK +
-              self._pad(text, padto) +
-              Style.RESET_ALL)
+        self.print_(text=text, fore='black', back='white', h_pad=padto)
 
     def print_heading_yellow(self, text, padto=0):
         '''
         PURPOSE:
         This method prints black text on a yellow background.
         '''
-        print(Back.YELLOW + Fore.BLACK +
-              self._pad(text, padto) +
-              Style.RESET_ALL)
-
-    def print_normal(self, text):
-        '''
-        PURPOSE:
-        This method prints green text on a black background.
-        '''
-        print(Fore.LIGHTGREEN_EX +
-              text +
-              Style.RESET_ALL)
-
-    def print_warning(self, text):
-        '''
-        PURPOSE:
-        This method prints yellow text on a black background.
-        '''
-        print(Fore.LIGHTYELLOW_EX +
-              text +
-              Style.RESET_ALL)
-
-    def print_alert(self, text):
-        '''
-        PURPOSE:
-        This method prints red text on a black background.
-        '''
-        print(Fore.LIGHTRED_EX +
-              text +
-              Style.RESET_ALL)
-
-    def print_error(self, text):
-        '''
-        PURPOSE:
-        This method prints red text on a black background.
-        '''
-        print(Fore.LIGHTRED_EX)
-        reporterror.reporterror(text)
-        print(Style.RESET_ALL)
+        self.print_(text=text, fore='black', back='yellow', h_pad=padto)
 
     def print_error_enviro(self):
         '''
@@ -268,7 +382,77 @@ class UserInterface(object):
         text = self._cfg['windws'].format(mtd, cls)
         self.print_error(text)
 
-    def _pad(self, text, padto):
-        padding = padto - len(text.expandtabs())
-        text = text + (' ' * padding)
-        return text
+    def print_normal(self, text):
+        '''
+        PURPOSE:
+        This method prints green text on a black background.
+        '''
+        self.print_(text=text, fore='green', back='black', style='bright')
+
+    def print_warning(self, text):
+        '''
+        PURPOSE:
+        This method prints yellow text on a black background.
+        '''
+        self.print_(text=text, fore='yellow', back='black', style='bright')
+
+    def print_alert(self, text):
+        '''
+        PURPOSE:
+        This method prints red text on a black background.
+        '''
+        self.print_(text=text, fore='red', back='black', style='bright')
+
+    @staticmethod
+    def print_blank_lines(quantity=1):
+        '''
+        PURPOSE:
+        This method prints (n) blank lines.
+        '''
+        for i in range(quantity): print('')
+
+    @staticmethod
+    def print_error(text):
+        '''
+        PURPOSE:
+        This method prints red text on a black background, and formats
+        the output using reporterror functionality.
+        '''
+        print(Fore.LIGHTRED_EX)
+        reporterror.reporterror(text)
+        print(Style.RESET_ALL)
+
+    @staticmethod
+    def _pad(text, padto):
+        '''
+        PURPOSE:
+        This method is used to pad text to the value provided in the
+        padto parameter.
+
+        The padto value is a *field size* value, *not* the number of
+        blank characters added to the end of the text string.
+        '''
+        return '{:{padto}}'.format(text, padto=padto)
+
+    @staticmethod
+    def _build_color_dict(class_):
+        '''
+        PURPOSE:
+        This function is used to create a dictionary from a class and
+        return the class attributes, attribute values as a
+        key/value pairs.
+
+        For example, when the colorama.Fore class is passed, the output
+        looks like:
+
+            {'black': '\x1b[30m', 'blue': '\x1b[34m', ...,
+             'white': '\x1b[37m', 'yellow': '\x1b[33m'}
+
+        DESIGN:
+        This function is built to specifically *remove* the LIGHT*_EX
+        colours from the output dictionary, as these colours are
+        accessed using print_()'s 'style' parameter.
+        '''
+
+        #RETURN COMPILED DICTIONARY WITH LIGHT*_EX ITEMS REMOVED
+        return {k.lower():v for k, v in vars(class_).items() if not k.lower().startswith('light')}
