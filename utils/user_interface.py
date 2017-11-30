@@ -1,7 +1,7 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.3.0
+Version:    0.3.1
 
 Security:   NONE
 
@@ -83,18 +83,32 @@ Date        Programmer      Version     Update
                                         Addressed pylint error 'Method could be a function' by
                                         removing the 'self' parameter and adding a @staticmethod
                                         decorator; as no class parameters are changed by the
-                                        methods/functions.  pylint (10/10)
+                                        methods/functions.
+30.11.17    J. Berendt      0.3.1       BUG04: When padding text which included tabs, the back
+                                        colour padding extended past the surrounding h_pads.
+                                        FIX04: Updated the _pad() function to use
+                                        str.expandtabs(4) with the text string.
+                                        BUG05: User prompts do not act as expected with tiger.
+                                        FIX05: Updated default values for the print_() method's
+                                        ending_char and add_space parameters to '\n' and False,
+                                        respectively.
+                                        Added a sleep parameter to the print_() method to enable
+                                        pausing after a message / banner is printed.
+                                        pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
+
+#ALLOW OUR IMPORT GROUPING
+#pylint: disable=ungrouped-imports
 
 import os
 import inspect
-import reporterror
-import config
+import time
 
-from _version_ui import __version__
+import config
+import reporterror
 from colorama import init as colourinit
 from colorama import Fore, Back, Style
-
+from _version_ui import __version__
 
 class UserInterface(object):
 
@@ -144,7 +158,10 @@ class UserInterface(object):
         self._style = self._build_color_dict(class_=Style)
 
 
-    def print_(self, text, fore='white', back='black', style='normal', h_pad=0, v_pad=0):
+    def print_(self, text, fore='white', back='black', style='normal',
+               h_pad=0, v_pad=0, sleep=0):
+
+        #TODO: ADD SLEEP TIMER
 
         '''
         PURPOSE:
@@ -163,6 +180,12 @@ class UserInterface(object):
 
         In addition to colour, horizontal and vertical padding are
         available.
+
+        After a message or banner is printed, the sleep timer can be
+        called to pause the program for (n) seconds; for the user to
+        read the message or banner.  If the v_pad value is > 0, and the
+        sleep value is 0, the sleep timer value is overridden with the
+        value defined in the config file's v_pad_sleep key.
 
         For further detail, refer to the PARAMETERS section
         of this docstring, and refer to the ACCEPTED OPTIONS section for
@@ -195,6 +218,13 @@ class UserInterface(object):
         and below the text string - acting like a banner.  The banner
         will extend to the number of spaces specified in the h_pad
         parameter.
+        - sleep (default=0)
+        Number of seconds to pause the program after a message or
+        banner is printed.
+        Although the default sleep value is 0 seconds, the default
+        changes to (n) second, if the v_pad parameter is > 0.  This
+        provides a default pause for the user to read the banner.
+        The default v_pad sleep time can be updated in the config file.
 
         ACCEPTED OPTIONS:
         - fore / back
@@ -232,13 +262,18 @@ class UserInterface(object):
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
             #ADD BLANK LINE BELOW BANNER
             print ''
+            #UPDATE SLEEP TIMER FOR BANNER IF SLEEP=0
+            sleep = self._cfg['v_pad_sleep'] if sleep == 0 else sleep
         else:
             #PRINT MESSAGE
             print('%s%s%s%s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
 
+        #PAUSE FOR USER TO READ OUTPUT
+        time.sleep(sleep)
+
 
     def get_input(self, prompt, fore='white', back='black', style='normal',
-                  ending_char=':', add_space=True):
+                  ending_char='\n', add_space=False):
 
         '''
         PURPOSE:
@@ -260,9 +295,9 @@ class UserInterface(object):
         (SGR 30-37).
         The 'bright' style provides access to the 8 additional
         foreground colours (SGR 90-97).
-        - ending_char (default=':')
+        - ending_char (default='\n')
         Character to be added to the end of the prompt.
-        - add_space (default=True)
+        - add_space (default=False)
         Add a space separator between the prompt and the user's
         input.
 
@@ -280,6 +315,9 @@ class UserInterface(object):
 
         #TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
         space = ' ' if add_space is True else ''
+
+        #RESET COLOURS BEFORE PRINTING A NEW LINE ENDING CHAR
+        if ending_char == '\n': ending_char = '%s%s' % (Style.RESET_ALL, '\n')
 
         #BUILD THE PROMPT STRING
         prompt = '%s%s%s%s%s%s%s' % (_fore, _back, _style, prompt, ending_char,
@@ -432,7 +470,7 @@ class UserInterface(object):
         The padto value is a *field size* value, *not* the number of
         blank characters added to the end of the text string.
         '''
-        return '{:{padto}}'.format(text, padto=padto)
+        return '{:{padto}}'.format(text.expandtabs(4), padto=padto)
 
     @staticmethod
     def _build_color_dict(class_):
