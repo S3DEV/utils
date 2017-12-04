@@ -11751,7 +11751,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="utils_5.5.2">utils_5.5.2<a class="anchor-link" href="#utils_5.5.2">&#182;</a></h1><hr>
+<h1 id="utils_5.5.3">utils_5.5.3<a class="anchor-link" href="#utils_5.5.3">&#182;</a></h1><hr>
 <p>The <strong>utils</strong> package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.</p>
 <p>Change log information is included in each module's header.</p>
 <h2 id="PACKAGE-CONFIGURATION">PACKAGE CONFIGURATION<a class="anchor-link" href="#PACKAGE-CONFIGURATION">&#182;</a></h2><hr>
@@ -11866,6 +11866,9 @@ For example:</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.config</span> <span class="kn">as</span> <span class="nn">config</span>
 <span class="n">help</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.get_datafiles</span> <span class="kn">import</span> <span class="n">get_datafiles</span>
+<span class="n">help</span><span class="p">(</span><span class="n">get_datafiles</span><span class="p">)</span>
+</pre></div>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.log</span> <span class="kn">as</span> <span class="nn">log</span>
 <span class="n">help</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
 </pre></div>
@@ -11874,6 +11877,9 @@ For example:</p>
 </pre></div>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.reporterror</span> <span class="kn">as</span> <span class="nn">reporterror</span>
 <span class="n">help</span><span class="p">(</span><span class="n">reporterror</span><span class="p">)</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">utils.user_interface</span> <span class="kn">as</span> <span class="nn">ui</span>
+<span class="n">help</span><span class="p">(</span><span class="n">ui</span><span class="p">)</span>
 </pre></div>
 <h2 id="TROUBLESHOOTING">TROUBLESHOOTING<a class="anchor-link" href="#TROUBLESHOOTING">&#182;</a></h2><hr>
 <p>If the Linux (or Windows) installation is giving you trouble with <strong>cx_Oracle</strong>, use the <code>--no-deps</code> argument for <strong>pip</strong>.  This argument will ignore the dependencies, and allow you to install each dependency yourself, <em>if</em> you require it.</p>

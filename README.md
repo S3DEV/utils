@@ -1,5 +1,5 @@
 
-# utils_5.5.2
+# utils_5.5.3
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
 
@@ -113,6 +113,10 @@ import utils.config as config
 help(config)
 ```  
 ```python
+from utils.get_datafiles import get_datafiles
+help(get_datafiles)
+```  
+```python
 import utils.log as log
 help(log)
 ```  
@@ -123,6 +127,10 @@ help(progressbar.ProgressBar)
 ```python
 import utils.reporterror as reporterror
 help(reporterror)
+```  
+```python
+import utils.user_interface as ui
+help(ui)
 ```  
 
 
