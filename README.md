@@ -1,5 +1,5 @@
 
-# utils_5.5.3
+# utils_5.6.0
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
 
@@ -41,11 +41,12 @@ As of program version 4, a number of other standalone modules have been added to
       + direxists()
       + fileexists()
       + format_exif_date()
-      + getcolormap
+      + getcolormap()
       + getdrivername()
       + getsitepackages()
       + json_read()
       + json_write()
+      + listcolormaps()
       + rgb2hex()
       + testimport()
       + unidecode()

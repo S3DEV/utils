@@ -1,6 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    4.2.0
+Version:    4.3.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 
@@ -121,6 +121,16 @@ Date        Programmer      Version     Update
                                         parameter), to the oracle and sql db connection functions.
                                         pylint (10/10)
 20.10.17    J. Berendt      4.2.0       Added the getsitepackages() function.  pylint (10/10)
+11.12.17    J. Berendt      4.3.0       Updated getcolormap() function to include a colorscale
+                                        boolean parameter, which transforms a colour map into a
+                                        colorscale list for use with the Plotly colorscale
+                                        parameter.
+                                        Added a listcolormaps() method which prints the available
+                                        colour maps in matplotlib.
+                                        Added the _convert_to_colorscale() helper function for use
+                                        with the getcolormap() function.
+                                        Updated the format_exif_date() function to accept caller
+                                        specified input and output formats.  pylint (10/10)
 ------------------------------------------------------------------------------------------------'''
 
 import site
@@ -288,26 +298,32 @@ def rgb2hex(rgb_string, drop_alpha=False):
 
 #-----------------------------------------------------------------------
 #FUNCTION RETURNS A LIST OF CONVERTED VALUES FROM A MATPLOTLIB COLORMAP
-def getcolormap(colormap='Blues', n=5, dtype='hex', preview=False, preview_in='mpl'):
+def getcolormap(colormap='Blues', n=5, colorscale=False, dtype='hex',
+                preview=False, preview_in='mpl'):
 
     '''
     DESIGN:
     Function designed to return a list of colour values from a
-    matplotlib colormap.  The number of returned color values can
+    matplotlib colormap.  The number of returned colour values can
     range from 1 to 256.
 
     This is useful when creating a graph which requires gradient
     colour map. (e.g.: a plotly bar chart)
 
-    To list matplotlib color maps:
-    > from matplotlib.pyplot import colormaps
-    > colormaps()
+    To print a list of available colour maps:
+    > import utils.utils as u
+    > u.listcolormaps()
 
     PARAMETERS:
         - colormap (default='Blues')
           name of the matplotlib color map
-        - n  (default=1)
+        - n (default=1)
           number of colors to return
+        - colorscale (default=False)
+          converts the retured colour map into a list of colour scale
+          values.  this is useful with Plotly's colorscale parameter.
+          returned format: [(0.00, u'#f7fbff'), (0.33, u'#abd0e6'),
+                            (0.66, u'#3787c0'), (1.00, u'#08306b')]
         - dtype (default='hex')
           data type to return
         - preview (default=False)
@@ -350,7 +366,53 @@ def getcolormap(colormap='Blues', n=5, dtype='hex', preview=False, preview_in='m
         #PLOTLY
         if preview_in == 'plotly': _prev_plotly(cmap=colors, cmap_name=colormap)
 
-    return colors
+
+    #TEST FOR COLORSCALE >> RETURN COLOUR MAP OR COLOUR SCALE
+    return colors if colorscale is False else _convert_to_colorscale(cmap=colors)
+
+
+#-----------------------------------------------------------------------
+#HELPER FUNCTION TO CONVERT A COLOUR MAP TO A COLOUR SCALE LIST
+def _convert_to_colorscale(cmap):
+
+    '''
+    PURPOSE:
+    This is a helper function used to convert a colour map into a
+    colour scale list, as used by the Plotly colorscale parameter.
+
+    DESIGN:
+    Returned format: [(0.00, u'#f7fbff'), (0.33, u'#abd0e6'),
+                      (0.66, u'#3787c0'), (1.00, u'#08306b')]
+
+    DEPENDENCIES:
+    - numpy
+    '''
+
+    import numpy as np
+
+    return [i for i in zip(np.linspace(0, 1, num=len(cmap)), cmap)]
+
+
+#-----------------------------------------------------------------------
+#METHOD USED TO PRINT A LIST OF AVAILABLE MATPLOTLIB COLOUR MAPS
+def listcolormaps():
+
+    '''
+    PURPOSE:
+    A very simple method used to print a list of colour maps available
+    in matplotlib.
+
+    DEPENDENCIES:
+    - matplotlib
+
+    USE:
+    > import utils.utils as u
+    > u.listcolormaps()
+    '''
+
+    from matplotlib.pyplot import colormaps
+
+    print colormaps()
 
 
 #-----------------------------------------------------------------------
@@ -459,23 +521,25 @@ def _prev_plotly(cmap, cmap_name, out_file='c:/temp/cmap_graph.html'):
 
 #-----------------------------------------------------------------------
 #FUNCTION DESIGNED TO CONVERT EXIF DATE
-#FROM: (2010:01:31 12:31:18)
-#TO:   (20100131123118)
-def format_exif_date(datestring):
+def format_exif_date(datestring, input_format='%Y:%m:%d %H:%M:%S',
+                     output_format='%Y%m%d%H%M%S'):
 
     '''
     DESIGN:
     Function designed to convert the exif date/timestamp
-    from 2010:01:31 12:31:18 format to 20100131123118 format for easy
-    sorting.
+    from 2010:01:31 12:31:18 (or a caller specified) format to a
+    format specified by the caller.
 
     This is useful for storing an exif date as a datetime string.
 
     PARAMETERS:
-        - datestring
-          the datetime string to be converted
-          note: this function is looking for an exif datetime string.
-          (yyyy:mm:dd hh:mi:ss)
+    - datestring
+    the datetime string to be converted.
+    typical exif date format: yyyy:mm:dd hh:mi:ss
+    - input_format (default='%Y:%m:%d %H:%M:%S')
+    formatting string for the input datetime value.
+    - output_format (default='%Y%m%d%H%M%S')
+    formatting string for the resulting date time value.
 
     DEPENDENCIES:
     - datetime
@@ -487,14 +551,8 @@ def format_exif_date(datestring):
 
     from datetime import datetime as dt
 
-    inmask  = '%Y:%m:%d %H:%M:%S'
-    outmask = '%Y%m%d%H%M%S'
-
-    #PARSE DATETIME STRING
-    parsed = dt.strptime(datestring, inmask)
-
     #RETURN FORMATTED STRING
-    return dt.strftime(parsed, outmask)
+    return dt.strftime(dt.strptime(datestring, input_format), output_format)
 
 
 #-----------------------------------------------------------------------
