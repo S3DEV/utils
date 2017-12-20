@@ -1,6 +1,5 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
-Version:    4.3.0
 Py Ver:     2.7
 Purpose:    Central library standard s3dev utilities.
 

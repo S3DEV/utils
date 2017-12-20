@@ -1,6 +1,5 @@
 '''------------------------------------------------------------------------------------------------
 Program:    config
-Version:    0.0.4
 Py Ver:     2.7
 Purpose:    Small helper program designed to load a program's config file.
 

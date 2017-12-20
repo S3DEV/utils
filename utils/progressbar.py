@@ -1,6 +1,5 @@
 '''---------------------------------------------------------------------
 Program:    progressbar
-Version:    0.0.4
 Py Ver:     2.7
 Purpose:    This is a class which provides access to a simple console
             progress bar.

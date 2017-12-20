@@ -1,8 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
-Version:    0.3.1
-
 Security:   NONE
 
 Purpose:    This module provides an interface to the Win / Linux Command Line Interpreter (CLI).

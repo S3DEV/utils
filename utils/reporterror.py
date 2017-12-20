@@ -1,6 +1,5 @@
 '''------------------------------------------------------------------------------------------------
 Program:    reporterror
-Version:    0.0.3
 Platform:   Windows / Linux
 Py Ver:     2.7
 Purpose:    Module designed to report program errors to the console
