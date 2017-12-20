@@ -1,6 +1,5 @@
 '''------------------------------------------------------------------------------------------------
 Program:    get_datafiles
-Version:    0.1.0
 Platform:   Windows / Linux
 Py Ver:     2.7
 Purpose:    This module is designed to provide a list of data files to the calling setup.py file.

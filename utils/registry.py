@@ -1,8 +1,6 @@
 '''------------------------------------------------------------------------------------------------
 Program:    registry.py
 
-Version:    0.0.2
-
 Security:   NONE
 
 Purpose:    This module provides a simple interface to the Windows

@@ -1,6 +1,5 @@
 '''------------------------------------------------------------------------------------------------
 Program:    log
-Version:    0.3.0
 Py Ver:     2.7
 Purpose:    Small program designed to be a central log file creator.
             Updated to be part of the utils package, and installed into site-packages.
