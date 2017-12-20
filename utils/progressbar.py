@@ -29,8 +29,6 @@ Date        Programmer      Version     Update
 import sys
 import colorama
 
-from _version_progressbar import __version__
-
 
 class ProgressBar(object):
 

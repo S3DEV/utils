@@ -1,7 +1,11 @@
+
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
 Py Ver:     2.7
-Purpose:    Central library standard s3dev utilities.
+Purpose:    Central library for standard S3DEV utilities.
+
+Developer:  J. Berendt
+Email:      support@73rdstreetdevelopment.co.uk
 
 Comments:
 
@@ -130,6 +134,9 @@ Date        Programmer      Version     Update
                                         with the getcolormap() function.
                                         Updated the format_exif_date() function to accept caller
                                         specified input and output formats.  pylint (10/10)
+21.12.17    J. Berendt      4.4.0       Added the ping() function.
+                                        Functions and methods have been organised by public,
+                                        private, then alphabetically.
 ------------------------------------------------------------------------------------------------'''
 
 import site
@@ -137,7 +144,6 @@ import platform
 import config
 import reporterror
 import user_interface
-from _version_utils import __version__
 
 
 #GLOBAL CONSTANTS / CLASS INSTANTIATIONS
@@ -709,7 +715,7 @@ def _dbconn_mysql_conn(creds):
 
 
 #-----------------------------------------------------------------------
-#FUNCTION MAKES AN ORACLE DB CONNECTION AND RETURN THE CONN/CUR OBJECTS
+#FUNCTION MAKES A SQLSERVER DB CONNECTION AND RETURN THE CONN/CUR DICT
 def _dbconn_sql_conn(creds):
 
     '''
@@ -853,7 +859,6 @@ def dbconn_oracle(host=None, user=None, userid=None, password=None, from_file=Fa
     > dbo = u.dbconn_oracle(from_file=True, filename='db_config.json')
     > conn = dbo['conn']
     > cur = dbo['cur']
-
     '''
 
     try:
@@ -1412,3 +1417,39 @@ def unidecode(string):
 
     #RETURN VALUE
     return decoded
+
+
+#-----------------------------------------------------------------------
+def ping(server, count=1):
+
+    """
+    SUMMARY:
+    This function pings a server and returns a boolean result.
+
+    NOTE: Currently, **only Windows is supported**, with a Linux
+    update to follow soon.
+
+    DESIGN:
+    Using the platform's native 'ping' command, a server is pinged, and
+    a boolean value is returned to the caller to indicate if the server
+    was reached.  A ping status of 0 = True, and 1 = False.
+
+    If the server name is preceeded by \\ or //, these are stripped out
+    using the os.path.basename() function.
+
+    PARAMETERS:
+    - server
+    This string value can be either an IP address, a server name or a
+    web address.
+    - count (default=1)
+    An integer value indicating the number of ping attempts.
+    """
+
+    import os
+    import subprocess
+
+    #PING THE SERVER
+    status = subprocess.call('ping -n %d %s' % (count, os.path.basename(server)),
+                             stdout=open(os.devnull))
+    #RETURN BOOLEAN STATUS
+    return True if status == 0 else False

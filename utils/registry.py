@@ -40,12 +40,11 @@ Date        Programmer      Version     Update
 import _winreg as wr
 import user_interface as ui
 
-from _version_registry import __version__
-
 #IGNORE
 #pylint: disable=too-few-public-methods
 #IGNORE SHORTCUT TO CLASS INSTANTIATIONS
 #pylint: disable=invalid-name
+
 
 class Value(object):
     '''

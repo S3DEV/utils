@@ -32,10 +32,10 @@ Date        Programmer      Version     Update
 
 import os
 import utils
-from _version_gdf import __version__
 
 #ALLOW A LIST AS DEFAULT METHOD PARAMETER
 #pylint: disable=dangerous-default-value
+
 
 #-----------------------------------------------------------------------
 #FUNCTION RETURNS A PY2EXE LIST OF DATA FILES USED BY THIS PACKAGE

@@ -43,7 +43,7 @@ Date        Programmer      Version     Update
 import os
 import sys
 import json
-from _version_config import __version__
+
 
 #-----------------------------------------------------------------------
 #METHOD FOR GENERAL SETUP
