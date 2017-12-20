@@ -1,7 +1,10 @@
 '''------------------------------------------------------------------------------------------------
 Program:    utils.py
 Py Ver:     2.7
-Purpose:    Central library standard s3dev utilities.
+Purpose:    Central library for standard S3DEV utilities.
+
+Developer:  J. Berendt
+Email:      support@73rdstreetdevelopment.co.uk
 
 Comments:
 
@@ -137,7 +140,6 @@ import platform
 import config
 import reporterror
 import user_interface
-from _version_utils import __version__
 
 
 #GLOBAL CONSTANTS / CLASS INSTANTIATIONS
@@ -709,7 +711,7 @@ def _dbconn_mysql_conn(creds):
 
 
 #-----------------------------------------------------------------------
-#FUNCTION MAKES AN ORACLE DB CONNECTION AND RETURN THE CONN/CUR OBJECTS
+#FUNCTION MAKES A SQLSERVER DB CONNECTION AND RETURN THE CONN/CUR DICT
 def _dbconn_sql_conn(creds):
 
     '''
@@ -853,7 +855,6 @@ def dbconn_oracle(host=None, user=None, userid=None, password=None, from_file=Fa
     > dbo = u.dbconn_oracle(from_file=True, filename='db_config.json')
     > conn = dbo['conn']
     > cur = dbo['cur']
-
     '''
 
     try:

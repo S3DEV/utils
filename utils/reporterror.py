@@ -35,7 +35,6 @@ Date        Programmer      Version     Update
                                         Log() class.
 ------------------------------------------------------------------------------------------------'''
 
-from _version_reporterror import __version__
 
 #-----------------------------------------------------------------------
 #METHOD USED TO REPORT AN ERROR

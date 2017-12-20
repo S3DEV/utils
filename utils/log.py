@@ -58,7 +58,6 @@ import getpass
 from datetime import datetime as dt
 
 import reporterror
-from _version_log import __version__
 
 
 class Log(object):

@@ -36,6 +36,8 @@ Date        Programmer      Version     Update
 19.10.17    J. Berendt      0.2.0       Updated to use utils.get_datafiles() function for data
                                         file collection.
                                         Updated to re-include README and LICENCE files in install.
+20.12.17    J. Berendt      0.2.1       Updated to use new get_datafile() function, which pulls
+                                        README and LICENSE files properly.
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -62,8 +64,7 @@ REQUIRES        = ['numpy', 'cx_Oracle', 'unidecode', 'matplotlib', 'pyodbc', 'p
                    'mysql-connector==2.1.4', 'colorama']
 
 #ADD DATA FILES
-DATA_FILES      = [(SITE_PKGS, ['LICENSE', 'README.html', 'README.md'])] + \
-                   get_datafiles(pkg_dir=PACKAGE_ROOT, exts=['.json'])
+DATA_FILES      = get_datafiles(pkg_dir=PACKAGE_ROOT)
 
 #DEFINE PARAMETERS (LIST PROGRAM DEPENDENCIES IN INSTALL_REQUIRES PARAMETER)
 PARAMS = dict(name=PACKAGE,
