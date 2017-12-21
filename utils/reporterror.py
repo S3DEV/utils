@@ -1,4 +1,4 @@
-'''------------------------------------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    reporterror
 Platform:   Windows / Linux
 Py Ver:     2.7
@@ -19,7 +19,7 @@ Use:        > import utils.reporterror as reporterror
             > try:
             >   stuff here ...
             > except Exception as err:
-            >   #SEND ERROR TO REPORTERROR METHOD
+            >   # SEND ERROR TO REPORTERROR METHOD
             >   reporterror.reporterror(err)
 
 ---------------------------------------------------------------------------------------------------
@@ -33,14 +33,21 @@ Date        Programmer      Version     Update
                                         has been deleted from utils v5.
                                         FIX01: Replaced the write2log method call with the new
                                         Log() class.
-------------------------------------------------------------------------------------------------'''
+21.12.17    J. Berendt      0.0.4       **FORMATTING CHANGES**
+                                        Cleaned docstring text and formatting IAW PEP 257.
+                                        Changed docstrings to use triple-double quotes (PEP 257).
+                                        Changed block comments to add a space after '#' (PEP 8).
+                                        Moved the summary block comment from above each
+                                        method/function into the docstring.  pylint (10/10)
+------------------------------------------------------------------------------------------------"""
 
 
-#-----------------------------------------------------------------------
-#METHOD USED TO REPORT AN ERROR
-def reporterror(error, logevent=False, logfilepath='c:/temp/reporterror.log'):
+# ----------------------------------------------------------------------
+def reporterror(error, logevent=False,
+                logfilepath='c:/temp/reporterror.log'):
+    """
+    Report an error, using the Exception object.
 
-    '''
     DESIGN:
     Module designed to handle error reporting and logging.
 
@@ -58,19 +65,19 @@ def reporterror(error, logevent=False, logfilepath='c:/temp/reporterror.log'):
     > try:
     >     stuff here ...
     > except Exception as err:
-    >     #REPORT / LOG ERROR
+    >     # REPORT / LOG ERROR
     >     reporterror.reporterror(err)
-    '''
+    """
 
     import sys
     import traceback
     import log
 
-    #GET TRACEBACK OBJECTS
+    # GET TRACEBACK OBJECTS
     exc_type, exc_obj, exc_tb = sys.exc_info()
     filename, line_num, func_name, text = traceback.extract_tb(exc_tb)[-1]
 
-    #USER NOTIFICATION
+    # USER NOTIFICATION
     print ''
     print 'ERROR:\t%s'  % error
     print 'TYPE:\t%s'   % exc_type
@@ -78,13 +85,13 @@ def reporterror(error, logevent=False, logfilepath='c:/temp/reporterror.log'):
     print 'LINE:\t%s'   % line_num
     print 'CMD:\t%s'    % text
 
-    #LOG ERROR
+    # LOG ERROR
     if logevent:
-        #SETUP THE LOGGER
+        # SETUP THE LOGGER
         _log = log.Log(filepath=logfilepath)
-        #LOG ERROR
+        # LOG ERROR
         _log.write(text='ERROR: %s; CMD: %s; METHOD: %s; LINE: %s' %
-                            (error, text, func_name, line_num))
+                   (error, text, func_name, line_num))
 
-    #CLEANUP
+    # CLEANUP
     del (exc_type, exc_obj, exc_tb)

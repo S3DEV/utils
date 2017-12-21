@@ -1,4 +1,4 @@
-'''---------------------------------------------------------------------
+"""---------------------------------------------------------------------
 Program:    progressbar
 Py Ver:     2.7
 Purpose:    This is a class which provides access to a simple console
@@ -24,7 +24,8 @@ Date        Programmer      Version     Update
                                         option.
 05.06.17    J. Berendt      0.0.4       Moved version to external file.
                                         Added into utils package.
----------------------------------------------------------------------'''
+21.12.17    J. Berendt      0.0.5       Updated formatting IAW PEP 8.
+---------------------------------------------------------------------"""
 
 import sys
 import colorama
@@ -32,7 +33,7 @@ import colorama
 
 class ProgressBar(object):
 
-    '''
+    """
     DESIGN:
     This is a simple console progress bar which should be called
     inside a processing loop.
@@ -54,15 +55,15 @@ class ProgressBar(object):
     >
     > pb = progressbar.ProgressBar(bar_len=25, symbol='#', color='r')
     >
-    > #SOME PROCESS
+    > # SOME PROCESS
     > for i range(26):
-    >     #UPDATE PROGRESS
+    >     # UPDATE PROGRESS
     >     pb.update_progress(current=i, total=25)
-    >     #SOME PAUSE TO SEE UPDATES
+    >     # SOME PAUSE TO SEE UPDATES
     >     time.sleep(.1)
-    '''
+    """
 
-    #CONSTANT DECLARATIONS
+    # CONSTANT DECLARATIONS
     RED     = '31'
     GREEN   = '32'
     YELLOW  = '33'
@@ -72,67 +73,67 @@ class ProgressBar(object):
     WHITE   = '37'
 
 
+    # ------------------------------------------------------------------
     def __init__(self, bar_len=50, symbol='.', color='w'):
-
-        '''
+        """
         PURPOSE:
         Initialisation method.  Create the progress bar object.
-        '''
+        """
 
-        #MAKE COLORS WORK WITH WINDOWS
+        # MAKE COLORS WORK WITH WINDOWS
         colorama.init()
 
-        #SET CLASS VARIABLES
+        # SET CLASS VARIABLES
         self._bar_len = bar_len
         self._symbol = symbol
         self._color = color
         self._reset = '\x1b[0m'
 
-        #GET USER'S COLOUR
+        # GET USER'S COLOUR
         self._clr = self._getcolor()
 
 
+    # ------------------------------------------------------------------
     def update_progress(self, current, total):
-
-        '''
+        """
         PURPOSE:
         Method used to update the progress bar.
 
         USE:
         Refer to the class docstring: help(progressbar.ProgressBar)
-        '''
+        """
 
-        #CALCULATE PERCENT COMPLETE
+        # CALCULATE PERCENT COMPLETE
         percent = float(current) / total
-        #DETERMINE NUMBER OF 0 PLACEHOLDERS
+        # DETERMINE NUMBER OF 0 PLACEHOLDERS
         vals = len(str(total))
-        #NUMBER OF TICKS
+        # NUMBER OF TICKS
         ticks = self._symbol * int(round(percent * self._bar_len))
-        #NUMBER OF SPACE PLACEHOLDERS
+        # NUMBER OF SPACE PLACEHOLDERS
         spaces = ' ' * (self._bar_len - len(ticks))
 
-        #PRINT OUTPUT
+        # PRINT OUTPUT
         sys.stdout.write(self._clr + '\rProcessing %s of %s [ %s ] %.0f%% Complete' % \
                          (str(current).zfill(vals),
                           total,
                           ticks + spaces,
                           percent*100) + self._reset)
 
-        #FLUSH BUFFER
+        # FLUSH BUFFER
         sys.stdout.flush()
 
 
+    # ------------------------------------------------------------------
     def _getcolor(self):
-
-        '''
+        """
         PURPOSE:
         This is a helper function for returning the ANSI color string
         for the user's color option, using the global color constants.
-        '''
+        """
 
         color = ''
 
-        #RETURN USER COLOR AN ANSI STRING
+        # RETURN USER COLOR AN ANSI STRING
         if self._color.lower() == 'r' or self._color.lower() == 'red':
             color = '\x1b[%s;40m' % (self.RED)
         if self._color.lower() == 'g' or self._color.lower() == 'green':

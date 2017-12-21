@@ -1,4 +1,4 @@
-'''------------------------------------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    config
 Py Ver:     2.7
 Purpose:    Small helper program designed to load a program's config file.
@@ -38,22 +38,21 @@ Date        Programmer      Version     Update
                                         Simplified _fromjson function.
                                         Renamed function/method names to replace double leading
                                         underscore with single underscore. pylint (10/10)
-------------------------------------------------------------------------------------------------'''
+21.12.17    J. Berendt      0.0.5       Updated formatting IAW PEP 8 and PEP 257.  pylint (10/10)
+------------------------------------------------------------------------------------------------"""
 
 import os
 import sys
 import json
 
 
-#-----------------------------------------------------------------------
-#METHOD FOR GENERAL SETUP
+# ----------------------------------------------------------------------
 def loadconfig(filename='config.json', devmode=False):
+    """
+    Setup for loading a JSON file, then read and return JSON config
+    file content as a dictionary.
 
-    '''
     DESIGN:
-    Function designed to load and return a program's JSON config file
-    as a dictionary.
-
     The devmode parameter can be used if you are programming through an
     IDE which defaults the sys.argv[0] value to the cwd of the IDE,
     rather than from where the program is actually being run.
@@ -68,51 +67,51 @@ def loadconfig(filename='config.json', devmode=False):
     > c = config.loadconfig()
 
     > param_value = c['someparam_name']
-    '''
+    """
 
-    #TEST IF FULL PATH OR ONLY FILENAME WAS PASSED
+    # TEST IF FULL PATH OR ONLY FILENAME WAS PASSED
     if os.path.dirname(filename) == '':
 
-        #TEST PROGRAM MODE
+        # TEST PROGRAM MODE
         if devmode:
 
-            #STORE PROGRAM DIRECTORY
+            # STORE PROGRAM DIRECTORY
             path_base = os.getcwd()
 
         else:
 
-            #ASSIGN DIRECTORIES
-            #USE THE PROGRAM'S DIRECTORY AS ROOT FOR THE CONFIG FILE
+            # ASSIGN DIRECTORIES
+            # USE THE PROGRAM'S DIRECTORY AS ROOT FOR THE CONFIG FILE
             progdir = os.path.dirname(os.path.realpath(sys.argv[0]))
-            #IF THE PROGRAM DIR IS NOT AVAILABLE (NOT USED) USE CWD
+            # IF THE PROGRAM DIR IS NOT AVAILABLE (NOT USED) USE CWD
             curdir = os.getcwd()
 
-            #TEST PROGRAM DIR >> USE CWD IF NO PROGRAM DIR
+            # TEST PROGRAM DIR >> USE CWD IF NO PROGRAM DIR
             path_base = progdir if sys.argv[0] != '' else curdir
 
-        #CONSOLIDATE PATH AND FILENAME
+        # CONSOLIDATE PATH AND FILENAME
         fullpath = os.path.join(path_base, filename)
 
     else:
 
-        #ASSIGN PASSED PATH/FILENAME TO TESTED VARIABLE
+        # ASSIGN PASSED PATH/FILENAME TO TESTED VARIABLE
         fullpath = filename
 
-    #TEST IF THE FILE EXISTS
+    # TEST IF THE FILE EXISTS
     if os.path.exists(fullpath):
 
-        #LOAD CONFIG FILE
+        # LOAD CONFIG FILE
         return _fromjson(filepath=fullpath)
 
     else:
 
-        #USER NOTIFICATION
+        # USER NOTIFICATION
         raise UserWarning('The config file (%s) could not be found.' % (fullpath))
 
 
-#-----------------------------------------------------------------------
-#FUNCTION FOR READING THE CONFIG FILE INTO A DICTIONARY
+# ----------------------------------------------------------------------
 def _fromjson(filepath):
+    """Return JSON file content as a dictionary."""
 
-    #OPEN AND READ CONFIG FILE >> RETURN AS DICT
+    # OPEN AND READ CONFIG FILE >> RETURN AS DICT
     with open(filepath, 'r') as config: return json.load(config)

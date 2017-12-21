@@ -1,4 +1,4 @@
-'''------------------------------------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    user_interface.py
 
 Security:   NONE
@@ -94,9 +94,15 @@ Date        Programmer      Version     Update
                                         Added a sleep parameter to the print_() method to enable
                                         pausing after a message / banner is printed.
                                         pylint (10/10)
-------------------------------------------------------------------------------------------------'''
+21.12.17    J. Berendt      0.3.2       **FORMATTING CHANGES**
+                                        Cleaned docstring text and formatting IAW PEP 257.
+                                        Changed docstrings to use triple-double quotes (PEP 257).
+                                        Changed block comments to add a space after '#' (PEP 8).
+                                        Moved the summary block comment from above each
+                                        method/function into the docstring.  pylint (10/10)
+------------------------------------------------------------------------------------------------"""
 
-#ALLOW OUR IMPORT GROUPING
+# ALLOW OUR IMPORT GROUPING
 #pylint: disable=ungrouped-imports
 
 import os
@@ -111,7 +117,7 @@ from colorama import Fore, Back, Style
 
 class UserInterface(object):
 
-    '''
+    """
     PURPOSE:
     This class encapsulates the Windows / Linux Command Line Interpreter
     (CLI). Its methods provide a standard way of getting data
@@ -121,11 +127,13 @@ class UserInterface(object):
     import utils.user_interface as ui
     _ui = ui.UserInterface()
     _ui.print_heading_green(text='MY HEADER')
-    '''
+    """
 
+    # ------------------------------------------------------------------
     def __init__(self):
+        """
+        Initialise the class.
 
-        '''
         PURPOSE:
         This constructor initialises colorama, which enables the user
         to print coloured text to the CLI. It also reads the config
@@ -140,29 +148,30 @@ class UserInterface(object):
         support ANSI escape sequences, and therefore simply printing
         the escape sequence to the native Win CLI with the text does
         not work.  So we use Colorama for the low-level win32 work.
-        '''
+        """
 
-        #COLORAMA INITIALISATION
+        # COLORAMA INITIALISATION
         colourinit()
 
-        #SET LOCATION OF THE UI CONFIG FILE EXPLICITLY (SHOULD WORK FOR WIN AND LINUX)
+        # SET LOCATION OF THE UI CONFIG FILE EXPLICITLY (SHOULD WORK FOR WIN AND LINUX)
         ui_config_file = os.path.join(os.path.realpath(os.path.dirname(__file__)),
                                       'user_interface_config.json')
-        #LOAD CONFIG FILE
+        # LOAD CONFIG FILE
         self._cfg = config.loadconfig(filename=ui_config_file)
 
-        #BUILD REFERENCE DICTS OF COLORAMA FORE / BACK / STYLE
+        # BUILD REFERENCE DICTS OF COLORAMA FORE / BACK / STYLE
         self._fore  = self._build_color_dict(class_=Fore)
         self._back  = self._build_color_dict(class_=Back)
         self._style = self._build_color_dict(class_=Style)
 
 
+    # ------------------------------------------------------------------
     def print_(self, text, fore='white', back='black', style='normal',
                h_pad=0, v_pad=0, sleep=0):
+        """
+        Print the statement passed from the caller, and format as
+        specified.
 
-        #TODO: ADD SLEEP TIMER
-
-        '''
         PURPOSE:
         This method extends the functionality of the built-in print
         command by adding the options for text colouring and padding.
@@ -230,51 +239,53 @@ class UserInterface(object):
         black, blue, cyan, green, magenta, red, white, yellow
         - style
         bright, dim, normal
-        '''
+        """
 
-        #DECODE COLOR FROM STRING TO ANSI SEQUENCE
+        # DECODE COLOR FROM STRING TO ANSI SEQUENCE
         _fore   = self._fore[fore.lower()]
         _back   = self._back[back.lower()]
         _style  = self._style[style.lower()]
 
-        #TEST FOR HORIZONTAL PADDING
+        # TEST FOR HORIZONTAL PADDING
         if h_pad > 0:
-            #PAD TEXT
+            # PAD TEXT
             text = self._pad(text=text, padto=h_pad)
-            #CREATE SPACES FOR V-PADDING
+            # CREATE SPACES FOR V-PADDING
             spaces = self._pad(text='', padto=h_pad)
         else:
-            #CREATE SPACES FOR V-PADDING
+            # CREATE SPACES FOR V-PADDING
             spaces = self._pad(text='', padto=len(text))
 
-        #TEST FOR UPPER AND LOWER PADDING
+        # TEST FOR UPPER AND LOWER PADDING
         if v_pad > 0:
-            #ADD BLANK LINE ABOVE BANNER
+            # ADD BLANK LINE ABOVE BANNER
             print ''
             for i in range(v_pad):
-                #PRINT UPPER PAD (N) TIMES
+                # PRINT UPPER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
-            #PRINT MESSAGE & ADD SPACE BEFORE TEXT TO BRING OFF CONSOLE WALL
+            # PRINT MESSAGE & ADD SPACE BEFORE TEXT TO BRING OFF CONSOLE WALL
             print('%s%s%s %s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
             for i in range(v_pad):
-                #PRINT LOWER PAD (N) TIMES
+                # PRINT LOWER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
-            #ADD BLANK LINE BELOW BANNER
+            # ADD BLANK LINE BELOW BANNER
             print ''
-            #UPDATE SLEEP TIMER FOR BANNER IF SLEEP=0
+            # UPDATE SLEEP TIMER FOR BANNER IF SLEEP=0
             sleep = self._cfg['v_pad_sleep'] if sleep == 0 else sleep
         else:
-            #PRINT MESSAGE
+            # PRINT MESSAGE
             print('%s%s%s%s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
 
-        #PAUSE FOR USER TO READ OUTPUT
+        # PAUSE FOR USER TO READ OUTPUT
         time.sleep(sleep)
 
 
-    def get_input(self, prompt, fore='white', back='black', style='normal',
-                  ending_char='\n', add_space=False):
+    # ------------------------------------------------------------------
+    def get_input(self, prompt, fore='white', back='black',
+                  style='normal', ending_char='\n', add_space=False):
+        """
+        Get user input and format as specified by the caller.
 
-        '''
         PURPOSE:
         This method extends the built-in raw_input() user prompt by
         adding appearance control and text colouring through colorama.
@@ -305,155 +316,144 @@ class UserInterface(object):
         black, blue, cyan, green, magenta, red, white, yellow
         - style
         bright, dim, normal
-        '''
+        """
 
-        #DECODE COLOR FROM STRING TO ANSI SEQUENCE
+        # DECODE COLOR FROM STRING TO ANSI SEQUENCE
         _fore   = self._fore[fore.lower()]
         _back   = self._back[back.lower()]
         _style  = self._style[style.lower()]
 
-        #TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
+        # TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
         space = ' ' if add_space is True else ''
 
-        #RESET COLOURS BEFORE PRINTING A NEW LINE ENDING CHAR
+        # RESET COLOURS BEFORE PRINTING A NEW LINE ENDING CHAR
         if ending_char == '\n': ending_char = '%s%s' % (Style.RESET_ALL, '\n')
 
-        #BUILD THE PROMPT STRING
+        # BUILD THE PROMPT STRING
         prompt = '%s%s%s%s%s%s%s' % (_fore, _back, _style, prompt, ending_char,
                                      Style.RESET_ALL, space)
 
-        #PROMPT USER AND RETURN INPUT TO THE CALLER
+        # PROMPT USER AND RETURN INPUT TO THE CALLER
         return raw_input(prompt)
 
 
+    # ------------------------------------------------------------------
     def print_heading_cyan(self, text, padto=0):
-        '''
-        PURPOSE:
-        This method prints black text on a cyan background.
-        '''
+        """Print black text on a cyan background."""
         self.print_(text=text, fore='black', back='cyan', h_pad=padto)
 
+    # ------------------------------------------------------------------
     def print_heading_green(self, text, padto=0):
-        '''
-        PURPOSE:
-        This method prints black text on a green background.
-        '''
+        """Print black text on a green background."""
         self.print_(text=text, fore='black', back='green', h_pad=padto)
 
+    # ------------------------------------------------------------------
     def print_heading_white(self, text, padto=0):
-        '''
-        PURPOSE:
-        This method prints black text on a white background.
-        '''
+        """Print black text on a white background."""
         self.print_(text=text, fore='black', back='white', h_pad=padto)
 
+    # ------------------------------------------------------------------
     def print_heading_yellow(self, text, padto=0):
-        '''
-        PURPOSE:
-        This method prints black text on a yellow background.
-        '''
+        """Print black text on a yellow background."""
         self.print_(text=text, fore='black', back='yellow', h_pad=padto)
 
+    # ------------------------------------------------------------------
     def print_error_enviro(self):
-        '''
-        PURPOSE:
-        This method prints red text on a black background. It uses the
-        stack and the config file to print a message for environment
-        errors.
-        '''
+        """Print red environment error text on a black background.
+
+        DESIGN:
+        It uses the stack and the config file to print a message for
+        environment errors.
+        """
         stack = inspect.stack()
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['enviro'].format(mtd, cls)
         self.print_error(text)
 
+    # ------------------------------------------------------------------
     def print_error_intoor(self):
-        '''
-        PURPOSE:
-        This method prints red text on a black background. It uses the
-        stack and the config file to print a message for integer out
-        of range errors.
-        '''
+        """Print red integer out of range error text on black
+        background.
+
+        DESIGN:
+        It uses the stack and the config file to print a message for
+        integer out of range errors.
+        """
         stack = inspect.stack()
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['intoor'].format(mtd, cls)
         self.print_error(text)
 
+    # ------------------------------------------------------------------
     def print_error_notimp(self):
-        '''
-        PURPOSE:
-        This method prints red text on a black background. It uses the
-        stack and the config file to print a message for not
+        """Print red not implemented error text on black background.
+
+        DESIGN:
+        It uses the stack and the config file to print a message for not
         implemented errors.
-        '''
+        """
         stack = inspect.stack()
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['notimp'].format(mtd, cls)
         self.print_error(text)
 
+    # ------------------------------------------------------------------
     def print_error_unexpd(self):
-        '''
-        PURPOSE:
-        This method prints red text on a black background. It uses the
-        stack and the config file to print a message for unexpected
-        errors.
-        '''
+        """Print red unexpected error text on black background.
+
+        DESIGN:
+        It uses the stack and the config file to print a message for
+        unexpected errors.
+        """
         stack = inspect.stack()
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['unexpd'].format(mtd, cls)
         self.print_error(text)
 
+    # ------------------------------------------------------------------
     def print_error_windws(self):
-        '''
-        PURPOSE:
-        This method prints red text on a black background. It uses the
-        stack and the config file to print a message for Windows
-        errors.
-        '''
+        """Print red Windows error text on black background.
+
+        DESIGN:
+        It uses the stack and the config file to print a message for
+        Windows errors.
+        """
         stack = inspect.stack()
         mtd = inspect.currentframe().f_back.f_code.co_name
         cls = stack[1][0].f_locals['self'].__class__
         text = self._cfg['windws'].format(mtd, cls)
         self.print_error(text)
 
+    # ------------------------------------------------------------------
     def print_normal(self, text):
-        '''
-        PURPOSE:
-        This method prints green text on a black background.
-        '''
+        """Print green text on a black background."""
         self.print_(text=text, fore='green', back='black', style='bright')
 
+    # ------------------------------------------------------------------
     def print_warning(self, text):
-        '''
-        PURPOSE:
-        This method prints yellow text on a black background.
-        '''
+        """Print yellow text on a black background."""
         self.print_(text=text, fore='yellow', back='black', style='bright')
 
+    # ------------------------------------------------------------------
     def print_alert(self, text):
-        '''
-        PURPOSE:
-        This method prints red text on a black background.
-        '''
+        """Print red text on a black background."""
         self.print_(text=text, fore='red', back='black', style='bright')
 
+    # ------------------------------------------------------------------
     @staticmethod
     def print_blank_lines(quantity=1):
-        '''
-        PURPOSE:
-        This method prints (n) blank lines.
-        '''
+        """Print (n) blank lines."""
         for i in range(quantity): print('')
 
+    # ------------------------------------------------------------------
     @staticmethod
     def print_error(text):
-        '''
-        PURPOSE:
-        This method prints red text on a black background, and formats
-        the output using reporterror functionality.
+        """
+        Print red error text on a black background.
 
         PARAMETERS:
         - text
@@ -464,31 +464,29 @@ class UserInterface(object):
                 ...
             except Exception as err
                 _ui.print_error(text=err)
-        '''
+        """
         print(Fore.LIGHTRED_EX)
         reporterror.reporterror(text)
         print(Style.RESET_ALL)
 
+    # ------------------------------------------------------------------
     @staticmethod
     def _pad(text, padto):
-        '''
-        PURPOSE:
-        This method is used to pad text to the value provided in the
-        padto parameter.
+        """Pad the text value, with (n) spaces.
 
+        DESIGN:
         The padto value is a *field size* value, *not* the number of
         blank characters added to the end of the text string.
-        '''
+        """
         return '{:{padto}}'.format(text.expandtabs(4), padto=padto)
 
+    # ------------------------------------------------------------------
     @staticmethod
     def _build_color_dict(class_):
-        '''
-        PURPOSE:
-        This function is used to create a dictionary from a class and
-        return the class attributes, attribute values as a
-        key/value pairs.
+        """Create a dictionary of colours available in the colorama
+        .Fore and .Back classes.
 
+        EXAMPLE:
         For example, when the colorama.Fore class is passed, the output
         looks like:
 
@@ -499,7 +497,7 @@ class UserInterface(object):
         This function is built to specifically *remove* the LIGHT*_EX
         colours from the output dictionary, as these colours are
         accessed using print_()'s 'style' parameter.
-        '''
+        """
 
-        #RETURN COMPILED DICTIONARY WITH LIGHT*_EX ITEMS REMOVED
+        # RETURN COMPILED DICTIONARY WITH LIGHT*_EX ITEMS REMOVED
         return {k.lower():v for k, v in vars(class_).items() if not k.lower().startswith('light')}

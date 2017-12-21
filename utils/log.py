@@ -1,4 +1,4 @@
-'''------------------------------------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    log
 Py Ver:     2.7
 Purpose:    Small program designed to be a central log file creator.
@@ -50,7 +50,7 @@ Date        Programmer      Version     Update
                                         pylint (10/10)
 10.10.17    J. Berendt      0.3.0       Updated to remove depreciated methods and functions.
                                         - This update aligns with the utils v5 update.
-------------------------------------------------------------------------------------------------'''
+------------------------------------------------------------------------------------------------"""
 
 import os
 import socket
@@ -62,7 +62,7 @@ import reporterror
 
 class Log(object):
 
-    '''
+    """
     DESIGN:
     This is a small and simple log file writer class.
 
@@ -106,13 +106,13 @@ class Log(object):
     > _log = Log(filepath='path/to/file.log', autofill=True)
     >
     > _log.write(text='most cows can just over the moon,Fact,94.2,pct')
-    '''
+    """
 
-    #-------------------------------------------------------------------
-    #INITIALISATION METHOD
+    # ------------------------------------------------------------------
+    # INITIALISATION METHOD
     def __init__(self, filepath, autofill=True, printheader=False, headertext='', sep=','):
 
-        #INITIALISE CLASS VARIABLES
+        # INITIALISE CLASS VARIABLES
         self._filepath  = filepath
         self._autofill  = autofill
         self._sep       = sep
@@ -121,37 +121,37 @@ class Log(object):
         self._autotext  = ('%s%s%s%s' % (self._host, self._sep, self._user, self._sep)
                            if self._autofill is True else '')
 
-        #VALIDATION
-        #TEST THE LOG FILE EXISTS (IF HEADER IS NOT REQUESTED)
+        # VALIDATION
+        # TEST THE LOG FILE EXISTS (IF HEADER IS NOT REQUESTED)
         if printheader is False and os.path.exists(self._filepath) is False:
-            #NOTIFY USER
+            # NOTIFY USER
             raise UserWarning('The log file does not exist, however a header was not requested. '
                               'A header must be written at the time of log file creation.\n')
 
 
-        #VALIDATION
-        #TEST PRINTHEADER ARGUMENT, TO ENSURE A HEADER STRING IS BEING PASSED >> RAISE ERROR
+        # VALIDATION
+        # TEST PRINTHEADER ARGUMENT, TO ENSURE A HEADER STRING IS BEING PASSED >> RAISE ERROR
         if printheader is True and headertext == '':
-            #NOTIFY USER
+            # NOTIFY USER
             raise UserWarning('The printheader argument is True, however the headertext string is '
                               'blank. A headertext string must also be supplied.\n')
 
-        #WRITE HEADER
-        #TEST TO BE SURE A HEADER SHOULD BE WRITTEN >> PRINT HEADER
+        # WRITE HEADER
+        # TEST TO BE SURE A HEADER SHOULD BE WRITTEN >> PRINT HEADER
         if printheader is True and headertext != '' and os.path.exists(self._filepath) is False:
-            #CREATE FILE
+            # CREATE FILE
             with open(self._filepath, 'a') as f:
-                #WRITE HEADER
+                # WRITE HEADER
                 f.write(headertext)
-                #ADD NEW LING CHARACTER
+                # ADD NEW LING CHARACTER
                 f.write('\n')
 
 
-    #-------------------------------------------------------------------
-    #METHOD FOR WRITING TO THE LOG FILE
+    # ------------------------------------------------------------------
+    # METHOD FOR WRITING TO THE LOG FILE
     def write(self, text):
 
-        '''
+        """
         DESIGN:
         The write() method is used to write text to a log file.
 
@@ -173,36 +173,36 @@ class Log(object):
         > _log = Log(filepath='path/to/file.log', autofill=True)
         >
         > _log.write(text='just adding some random text to my log')
-        '''
+        """
 
         try:
 
-            #TEST THAT TEXT IS PASSED >> WRITE TEXT TO LOG
+            # TEST THAT TEXT IS PASSED >> WRITE TEXT TO LOG
             if text != '':
 
-                #TEST FOR AUTOFILL >> GET / POPULATE TIMESTAMP
+                # TEST FOR AUTOFILL >> GET / POPULATE TIMESTAMP
                 auto_text = '%s%s%s' % (dt.now(),
                                         self._sep,
                                         self._autotext) if self._autofill is True else ''
 
-                #APPEND TEXT TO LOG FILE
+                # APPEND TEXT TO LOG FILE
                 with open(self._filepath, 'a') as f:
-                    #WRITE TEXT
+                    # WRITE TEXT
                     f.write(auto_text)
                     f.write(text)
-                    #ADD NEW LINE CHARACTER
+                    # ADD NEW LINE CHARACTER
                     f.write('\n')
 
         except Exception as err:
-            #NOTIFICATION
+            # NOTIFICATION
             reporterror.reporterror(err)
 
 
-    #-------------------------------------------------------------------
-    #METHOD FOR WRITING A SINGLE BLANK LINE TO THE LOG FILE
+    # ------------------------------------------------------------------
+    # METHOD FOR WRITING A SINGLE BLANK LINE TO THE LOG FILE
     def write_blank_line(self):
 
-        r'''
+        r"""
         PURPOSE:
         The write_blank_lines() method does exactly as it says; writes
         a single blank line to the log.
@@ -215,13 +215,13 @@ class Log(object):
         > _log = Log(filepath='path/to/file.log', autofill=True)
         >
         > _log.write_blank_line()
-        '''
+        """
 
         try:
 
-            #APPEND BLANK LINE TO LOG FILE
+            # APPEND BLANK LINE TO LOG FILE
             with open(self._filepath, 'a') as f: f.write('\n')
 
         except Exception as err:
-            #NOTIFICATION
+            # NOTIFICATION
             reporterror.reporterror(err)
