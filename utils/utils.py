@@ -145,9 +145,13 @@ import config
 import reporterror
 import user_interface
 
-
 #GLOBAL CONSTANTS / CLASS INSTANTIATIONS
 _UI = user_interface.UserInterface()
+
+# TODO: RE-ORDER METHODS AND FUNCTIONS
+# TODO: CLEAN UP DOCSTRINGS
+# TODO: ADD MYSQL TO DATABASE MODULE
+# TODO: ADD SQLITE TO DATABASE MODULE
 
 #-----------------------------------------------------------------------
 #METHOD USED FOR DEPLOYMENT TESTING
