@@ -1,5 +1,5 @@
 
-# utils_5.6.0
+# utils_6.0.0
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
 
@@ -8,13 +8,19 @@ Change log information is included in each module's header.
 
 ## PACKAGE CONFIGURATION
 ---
-With package version 5, the **depreciated methods and functions from version 4, have been deleted**.  Version 5 includes the addition of Windows registry access (via the `_winreg` package), enabling easy manipulation querying of the registry and environment variables.
+With package version 6, the `database` class module has been added which features database class access to MySQL, Oracle, SQLite and SQL Server databases.
 
-As of program version 4, a number of other standalone modules have been added to the utils package.  Outlined below is the current package configuration.
+Outlined below is the current package configuration, with classes listed in **bold**.
 
 - utils
    + config
       + loadconfig()
+   + database
+      + **Database()**
+         + **MySQL()**
+         + **Oracle()**
+         + **SQLite()**
+         + **SQLServer()**
    + log
       + **Log()**
          + write()
@@ -34,10 +40,10 @@ As of program version 4, a number of other standalone modules have been added to
          + various console and error printing methods
    + utils
       + clean_df()
+      + dbconn_mysql()
       + dbconn_oracle()
       + dbconn_sql()
       + dbconn_sqlite()
-      + dbconn_mysql()
       + direxists()
       + fileexists()
       + format_exif_date()
@@ -47,6 +53,7 @@ As of program version 4, a number of other standalone modules have been added to
       + json_read()
       + json_write()
       + listcolormaps()
+      + ping()
       + rgb2hex()
       + testimport()
       + unidecode()
