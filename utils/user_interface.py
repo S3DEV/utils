@@ -100,23 +100,22 @@ Date        Programmer      Version     Update
                                         Changed block comments to add a space after '#' (PEP 8).
                                         Moved the summary block comment from above each
                                         method/function into the docstring.  pylint (10/10)
+12.02.18    J. Berendt      0.4.0       Added the PrintBanner() class which is used to print a
+                                        program information banner to the CLI at the start of a
+                                        program.
 ------------------------------------------------------------------------------------------------"""
-
-# ALLOW OUR IMPORT GROUPING
-#pylint: disable=ungrouped-imports
 
 import os
 import inspect
 import time
+#from ctypes import windll
 
 import config
 import reporterror
 from colorama import init as colourinit
 from colorama import Fore, Back, Style
 
-
 class UserInterface(object):
-
     """
     PURPOSE:
     This class encapsulates the Windows / Linux Command Line Interpreter
@@ -163,6 +162,63 @@ class UserInterface(object):
         self._fore  = self._build_color_dict(class_=Fore)
         self._back  = self._build_color_dict(class_=Back)
         self._style = self._build_color_dict(class_=Style)
+
+
+    # ------------------------------------------------------------------
+    def get_input(self, prompt, fore='white', back='black',
+                  style='normal', ending_char='\n', add_space=False):
+        """
+        Get user input and format as specified by the caller.
+
+        PURPOSE:
+        This method extends the built-in raw_input() user prompt by
+        adding appearance control and text colouring through colorama.
+
+        Like the raw_input() function, the user's input is returned to
+        the caller.
+
+        PARAMETERS:
+        - prompt
+        The user prompt text to be displayed.
+        - fore (default='white')
+        The output text's colour, as a string.
+        - back (default='black')
+        The output text's background colour, as a string.
+        - style (default='normal')
+        The 'normal' style selects the 8 original foreground colours
+        (SGR 30-37).
+        The 'bright' style provides access to the 8 additional
+        foreground colours (SGR 90-97).
+        - ending_char (default='\n')
+        Character to be added to the end of the prompt.
+        - add_space (default=False)
+        Add a space separator between the prompt and the user's
+        input.
+
+        ACCEPTED OPTIONS:
+        - fore / back
+        black, blue, cyan, green, magenta, red, white, yellow
+        - style
+        bright, dim, normal
+        """
+
+        # DECODE COLOR FROM STRING TO ANSI SEQUENCE
+        _fore   = self._fore[fore.lower()]
+        _back   = self._back[back.lower()]
+        _style  = self._style[style.lower()]
+
+        # TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
+        space = ' ' if add_space is True else ''
+
+        # RESET COLOURS BEFORE PRINTING A NEW LINE ENDING CHAR
+        if ending_char == '\n': ending_char = '%s%s' % (Style.RESET_ALL, '\n')
+
+        # BUILD THE PROMPT STRING
+        prompt = '%s%s%s%s%s%s%s' % (_fore, _back, _style, prompt, ending_char,
+                                     Style.RESET_ALL, space)
+
+        # PROMPT USER AND RETURN INPUT TO THE CALLER
+        return raw_input(prompt)
 
 
     # ------------------------------------------------------------------
@@ -240,7 +296,6 @@ class UserInterface(object):
         - style
         bright, dim, normal
         """
-
         # DECODE COLOR FROM STRING TO ANSI SEQUENCE
         _fore   = self._fore[fore.lower()]
         _back   = self._back[back.lower()]
@@ -279,83 +334,6 @@ class UserInterface(object):
         # PAUSE FOR USER TO READ OUTPUT
         time.sleep(sleep)
 
-
-    # ------------------------------------------------------------------
-    def get_input(self, prompt, fore='white', back='black',
-                  style='normal', ending_char='\n', add_space=False):
-        """
-        Get user input and format as specified by the caller.
-
-        PURPOSE:
-        This method extends the built-in raw_input() user prompt by
-        adding appearance control and text colouring through colorama.
-
-        Like the raw_input() function, the user's input is returned to
-        the caller.
-
-        PARAMETERS:
-        - prompt
-        The user prompt text to be displayed.
-        - fore (default='white')
-        The output text's colour, as a string.
-        - back (default='black')
-        The output text's background colour, as a string.
-        - style (default='normal')
-        The 'normal' style selects the 8 original foreground colours
-        (SGR 30-37).
-        The 'bright' style provides access to the 8 additional
-        foreground colours (SGR 90-97).
-        - ending_char (default='\n')
-        Character to be added to the end of the prompt.
-        - add_space (default=False)
-        Add a space separator between the prompt and the user's
-        input.
-
-        ACCEPTED OPTIONS:
-        - fore / back
-        black, blue, cyan, green, magenta, red, white, yellow
-        - style
-        bright, dim, normal
-        """
-
-        # DECODE COLOR FROM STRING TO ANSI SEQUENCE
-        _fore   = self._fore[fore.lower()]
-        _back   = self._back[back.lower()]
-        _style  = self._style[style.lower()]
-
-        # TEST FOR SPACE TO BE ADDED TO THE END OF THE PROMPT
-        space = ' ' if add_space is True else ''
-
-        # RESET COLOURS BEFORE PRINTING A NEW LINE ENDING CHAR
-        if ending_char == '\n': ending_char = '%s%s' % (Style.RESET_ALL, '\n')
-
-        # BUILD THE PROMPT STRING
-        prompt = '%s%s%s%s%s%s%s' % (_fore, _back, _style, prompt, ending_char,
-                                     Style.RESET_ALL, space)
-
-        # PROMPT USER AND RETURN INPUT TO THE CALLER
-        return raw_input(prompt)
-
-
-    # ------------------------------------------------------------------
-    def print_heading_cyan(self, text, padto=0):
-        """Print black text on a cyan background."""
-        self.print_(text=text, fore='black', back='cyan', h_pad=padto)
-
-    # ------------------------------------------------------------------
-    def print_heading_green(self, text, padto=0):
-        """Print black text on a green background."""
-        self.print_(text=text, fore='black', back='green', h_pad=padto)
-
-    # ------------------------------------------------------------------
-    def print_heading_white(self, text, padto=0):
-        """Print black text on a white background."""
-        self.print_(text=text, fore='black', back='white', h_pad=padto)
-
-    # ------------------------------------------------------------------
-    def print_heading_yellow(self, text, padto=0):
-        """Print black text on a yellow background."""
-        self.print_(text=text, fore='black', back='yellow', h_pad=padto)
 
     # ------------------------------------------------------------------
     def print_error_enviro(self):
@@ -429,6 +407,31 @@ class UserInterface(object):
         self.print_error(text)
 
     # ------------------------------------------------------------------
+    def print_heading_cyan(self, text, padto=0):
+        """Print black text on a cyan background."""
+        self.print_(text=text, fore='black', back='cyan', h_pad=padto)
+
+    # ------------------------------------------------------------------
+    def print_heading_green(self, text, padto=0):
+        """Print black text on a green background."""
+        self.print_(text=text, fore='black', back='green', h_pad=padto)
+
+    # ------------------------------------------------------------------
+    def print_heading_white(self, text, padto=0):
+        """Print black text on a white background."""
+        self.print_(text=text, fore='black', back='white', h_pad=padto)
+
+    # ------------------------------------------------------------------
+    def print_heading_yellow(self, text, padto=0):
+        """Print black text on a yellow background."""
+        self.print_(text=text, fore='black', back='yellow', h_pad=padto)
+
+    # ------------------------------------------------------------------
+    def print_alert(self, text):
+        """Print red text on a black background."""
+        self.print_(text=text, fore='red', back='black', style='bright')
+
+    # ------------------------------------------------------------------
     def print_normal(self, text):
         """Print green text on a black background."""
         self.print_(text=text, fore='green', back='black', style='bright')
@@ -437,11 +440,6 @@ class UserInterface(object):
     def print_warning(self, text):
         """Print yellow text on a black background."""
         self.print_(text=text, fore='yellow', back='black', style='bright')
-
-    # ------------------------------------------------------------------
-    def print_alert(self, text):
-        """Print red text on a black background."""
-        self.print_(text=text, fore='red', back='black', style='bright')
 
     # ------------------------------------------------------------------
     @staticmethod
@@ -498,6 +496,238 @@ class UserInterface(object):
         colours from the output dictionary, as these colours are
         accessed using print_()'s 'style' parameter.
         """
-
         # RETURN COMPILED DICTIONARY WITH LIGHT*_EX ITEMS REMOVED
         return {k.lower():v for k, v in vars(class_).items() if not k.lower().startswith('light')}
+
+
+class PrintBanner(object):
+    """
+    PURPOSE:
+    This class is used to print a program information banner to the CLI,
+    which may be useful if you want to use a 'standardised' program
+    header across all of your programs.  This class can be called at
+    the start of a program.
+
+    Refer to the DESIGN and PARAMETERS sections for configuration
+    details; as this banner is highly configurable.
+
+    For example:
+    ------------------------------------------------------------------
+    Program     :    bob_the_great
+    Version     :    2.0.3
+
+    Description :    Gives conclusive proof why Bob is so great.
+    ------------------------------------------------------------------
+
+    USE:
+    import utils.user_interface as ui
+    ui.PrintBanner(name='bob_the_great', version='2.0.3',
+                   desc='Gives conclusive proof why Bob is so great.')
+    """
+
+    # ALLOW MANY ATTRIBS AND FEW METHODS
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, name=None, version=None, desc=None, info=None, chars=72,
+                 ribbon='-', fore='white', back='black', style='bright'):
+        """
+        Display program info to the CLI at the start of a program.
+
+        DESIGN:
+        In short, if the 'info' parameter is left as None, a default
+        banner is generated using the values passed into the name,
+        version and desc parameters.
+
+        The string templates used for the banner layout may be
+        configured in the UI config file.
+
+        Additional configuration is available through the other
+        parameters, which are all defined in the PARAMETERS section
+        below.
+
+        BASIC PARAMETERS:
+        - name
+        Name of your program.
+        - version
+        The version number of your program.
+        - desc
+        Description of what your program is all about.
+
+        INFO PARAMETER:
+        - info
+        The info parameter is used to generate a completely customised
+        banner.  Basically, whatever key/value pairs you pass in, are
+        what will be printed in the banner.
+
+        This parameter accepts a list of dictionaries.  For example:
+        info = [{'Program':'bob_the_great'},
+                {'Version':'2.0.3'},
+                {'':''},
+                {'Description':'Gives proof why Bob is great.'},
+                {'Comments':'Some more reasons Bob is so great.'}]
+
+        This info parameter would be parsed into:
+        ----------------------------------------------------------------
+         Program          :    bob_the_great
+         Version          :    2.0.3
+
+         Description      :    Gives proof why Bob is great.
+         Comments         :    Some more reasons Bob is so great.
+        ----------------------------------------------------------------
+
+        CONFIG PARAMETERS:
+        - chars
+        How long the ribbon will be, in characters.
+        - ribbon
+        The character(s) to use for the ribbon.
+        If multiple characters are passed into this parameter, these
+        characters will be repeated until the length of the 'chars'
+        parameter is met.
+        - fore
+        Text colour.  The eight basic colour names are accepted as
+        strings.
+        - back
+        Background colour.  The eight basic colour names are accepted
+        as strings.
+        - style
+        Brightness of the text/background.  Accepted strings:
+            - dim
+            - bright (default)
+            - normal
+
+        USE:
+        import utils.user_interface as ui
+        ui.PrintBanner(name='bob_the_great', version='2.0.3',
+                       desc='Gives proof why Bob is so great.',
+                       chars=55, ribbon='~-', fore='yellow',
+                       back='black', style='bright')
+
+        Will print this:
+        ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+         Program        :    bob_the_great
+         Version        :    2.0.3
+
+         Description    :    Gives proof why Bob is so great.
+        ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+        """
+
+        # TODO: Wrap windll for Linux functionality.
+
+        # INITIALISE
+        self._name      = name
+        self._version   = version
+        self._desc      = desc
+        self._info      = info
+        self._chars     = chars
+        self._ribbon    = ribbon * (chars / len(ribbon))
+        self._fore      = fore
+        self._back      = back
+        self._style     = style
+        self._to_print  = []
+        self._blank     = ''
+        self._spaces    = ' '*4
+        self._pad       = 15
+        self._adtl      = 4
+        self._cfg       = config.loadconfig('user_interface_config.json')
+        self._ui        = UserInterface()
+
+        # PRINT PROGRAM INFO BANNER
+        self._print_prog_banner()
+
+    # ------------------------------------------------------------------
+    def _add_ribbon(self):
+        """Add blank line and ribbon to start and end of banner."""
+        # ADD BLANK START/END LINES AND RIBBON
+        self._to_print.insert(0, '')
+        self._to_print.insert(1, self._ribbon)
+        self._to_print.append(self._ribbon)
+        self._to_print.append('')
+
+    # ------------------------------------------------------------------
+    def _get_longest_key(self):
+        """Return the length of the longest key, as an integer."""
+        keys = [i.keys()[0] for i in self._info]
+        longest = max(map(len, keys))
+        return longest
+
+    # ------------------------------------------------------------------
+    def _print_prog_banner(self):
+        """
+        Using the 'info' parameter as reference, determine if the
+        default or user-defined banner should be printed; then print
+        the banner using the UserInterface class.
+        """
+        # TEST TYPE OF BANNER TO CREATE
+        if self._info is not None:
+            self._setup_custom()
+        else:
+            self._setup_default()
+
+        # PRINT PROGRAM INFO BANNER
+        for text in self._to_print:
+            self._ui.print_(text=text, fore=self._fore, back=self._back,
+                            style=self._style, h_pad=self._chars)
+
+    # ------------------------------------------------------------------
+    def _setup_custom(self):
+        """
+        Set up the user-defined banner.
+
+        DESIGN:
+        Set the buffer (pad) for all 'key' elements using the length of
+        the longest dict key.  This allows all ':' characters to align,
+        regardless of the varying lengths of each key.
+
+        Then, iterate through the list of dictionaries and extract the
+        key/value pairs for use in the banner.  The banner's layout
+        template is defined in the UI config file.
+
+        Finally, add the starting/ending blank line and ribbon to the
+        compiled list.  This list is then used by the
+        _print_prog_banner() method to print the banner to the CLI.
+        """
+        # DETERMINE REQUIRED PADDING
+        pad = self._get_longest_key() + self._adtl
+
+        # BUILD PRINT STRING FROM LIST OF DICTS
+        for i in self._info:
+            for key, val in i.items():
+                # TEST IF LINE SHOULD BE LEFT BLANK
+                if key != '':
+                    self._to_print.append(self._cfg['cust_str'].format(key=key, pad=pad,
+                                                                       spaces=self._spaces,
+                                                                       val=val))
+                else:
+                    # ADD A BLANK LINE
+                    self._to_print.append('')
+
+        # ADD START/END RIBBON
+        self._add_ribbon()
+
+    # ------------------------------------------------------------------
+    def _setup_default(self):
+        """
+        Set up the default banner.
+
+        DESIGN:
+        A pre-defined list of 'key' items is iterated, which is used to
+        build the list containing the lines to print.
+
+        Finally, add the starting/ending blank line and ribbon to the
+        compiled list.  This list is then used by the
+        _print_prog_banner() method to print the banner to the CLI.
+        """
+        # BUILD PRINT STRING
+        for title, name in zip(['Program', 'Version', '', 'Description'],
+                               [self._name, self._version, '', self._desc]):
+            # TEST IF LINE SHOULD BE LEFT BLANK
+            if title != '':
+                self._to_print.append(self._cfg['def_str'].format(title=title, pad=self._pad,
+                                                                  spaces=self._spaces, name=name))
+            else:
+                # ADD A BLANK LINE
+                self._to_print.append('')
+
+        # ADD START/END RIBBON
+        self._add_ribbon()
