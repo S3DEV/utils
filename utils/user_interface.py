@@ -107,8 +107,9 @@ Date        Programmer      Version     Update
 
 import os
 import inspect
+import platform
 import time
-#from ctypes import windll
+from ctypes import windll
 
 import config
 import reporterror
@@ -546,6 +547,13 @@ class PrintBanner(object):
         parameters, which are all defined in the PARAMETERS section
         below.
 
+        Also, the title of the console window is updated to show the
+        program's name and version, if all of the following criteria
+        are met:
+            - Windows OS
+            - name parameter is not None
+            - version parameter is not None
+
         BASIC PARAMETERS:
         - name
         Name of your program.
@@ -612,8 +620,6 @@ class PrintBanner(object):
         ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
         """
 
-        # TODO: Wrap windll for Linux functionality.
-
         # INITIALISE
         self._name      = name
         self._version   = version
@@ -634,6 +640,9 @@ class PrintBanner(object):
 
         # PRINT PROGRAM INFO BANNER
         self._print_prog_banner()
+
+        # UPDATE CONSOLE WINDOW TITLE
+        self._update_console_title()
 
     # ------------------------------------------------------------------
     def _add_ribbon(self):
@@ -731,3 +740,25 @@ class PrintBanner(object):
 
         # ADD START/END RIBBON
         self._add_ribbon()
+
+    # ------------------------------------------------------------------
+    def _update_console_title(self):
+        """
+        For Windows, update the console window title.
+
+        DESIGN:
+        This method is only functional if the OS is Windows and the
+        name and version arguments are passed.
+        """
+        # TEST OS
+        is_win = 'win' in self._get_os()
+        # TEST QUALIFIERS
+        if all([self._name is not None, self._version is not None, is_win]):
+            # CHANGE CMD WINDOW TITLE
+            windll.kernel32.SetConsoleTitleW(u'%s - %s' % (self._name, self._version))
+
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _get_os():
+        """Return the OS."""
+        return platform.system().lower()
