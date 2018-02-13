@@ -149,6 +149,11 @@ Date        Programmer      Version     Update
                                         method/function into the docstring.
                                         Re-ordered functions and methods by public, private,
                                         then alphabetically for each group.  pylint (10/10)
+13.02.18    J. Berendt      4.5.0       Converted the 'private' _get_os() function to an accessible
+                                        function.
+                                        Cleaned various docstrings.
+                                        Cleaned TODO list.
+                                        Addressed minor pylint messages.  pylint (10/10)
 ------------------------------------------------------------------------------------------------"""
 
 # AS THIS IS A UTILITIES PACKAGE, NOT ALL IMPORTS ARE USED DURING
@@ -160,13 +165,6 @@ import user_interface
 
 # GLOBAL CONSTANTS / CLASS INSTANTIATIONS
 _UI = user_interface.UserInterface()
-
-# xTODO: RE-ORDER METHODS AND FUNCTIONS
-# xTODO: CLEAN UP DOCSTRINGS
-# xTODO: PEP8
-# xTODO: PEP257
-# TODO: ADD MYSQL TO DATABASE MODULE
-# TODO: ADD SQLITE TO DATABASE MODULE
 
 
 # ----------------------------------------------------------------------
@@ -398,7 +396,6 @@ def dbconn_oracle(host=None, user=None, userid=None, password=None,
 # ----------------------------------------------------------------------
 def dbconn_sql(server=None, database=None, userid=None, user=None,
                password=None, from_file=False, filename=None):
-
     """
     Return SQL Server database connection and cursor objects.  Prompt
     for missing credentials.
@@ -666,6 +663,14 @@ def format_exif_date(datestring, input_format='%Y:%m:%d %H:%M:%S',
 
 
 # ----------------------------------------------------------------------
+def get_os():
+    """Return the platform's OS."""
+
+    import platform
+    return platform.system().lower()
+
+
+# ----------------------------------------------------------------------
 def getcolormap(colormap='Blues', n=5, colorscale=False, dtype='hex',
                 preview=False, preview_in='mpl'):
     """
@@ -715,8 +720,9 @@ def getcolormap(colormap='Blues', n=5, colorscale=False, dtype='hex',
                             preview_in='plotly')
     """
 
+    # RENAME rbg2hex TO AVOID CONFLICT WITH utils.rgb2hex FUNCTION
     from matplotlib import cm
-    from matplotlib.colors import rgb2hex
+    from matplotlib.colors import rgb2hex as r2h
 
     # CREATE A COLOR MAP OBJECT (MAP, NUMBER OF VALUES)
     cmap = cm.get_cmap(colormap, n)
@@ -724,7 +730,7 @@ def getcolormap(colormap='Blues', n=5, colorscale=False, dtype='hex',
     # CONVERT COLORMAP OBJECT INTO LIST OF COLORS
     if dtype.lower() == 'hex':
         # RETURN A LIST OF RGB2HEX CONVERTED COLORS
-        colors = [rgb2hex(cmap(i)[:3]) for i in range(cmap.N)]
+        colors = [r2h(cmap(i)[:3]) for i in range(cmap.N)]
     else:
         colors = None
 
@@ -784,10 +790,12 @@ def getdrivername(drivername, returnall=False):
         # TEST IF USER WANTS ALL DRIVERS RETURNED
         if returnall:
             # RETURN ALL
-            return [driver for driver in pyodbc.drivers() if re.search(drivername, driver)]
+            drivers = [driver for driver in pyodbc.drivers() if re.search(drivername, driver)]
         else:
-            # GET / RETURN THE ODBC DRIVER NAME FOR SQL SERVER
-            return [driver for driver in pyodbc.drivers() if re.search(drivername, driver)][0]
+            # GET THE ODBC DRIVER NAME FOR SQL SERVER
+            drivers = [driver for driver in pyodbc.drivers() if re.search(drivername, driver)][0]
+
+        return drivers
 
 
 # ----------------------------------------------------------------------
@@ -822,7 +830,7 @@ def getsitepackages():
     import site
 
     # GET PLATFORM
-    my_os = _get_os()
+    my_os = get_os()
 
     # TEST PLATFORM >> GET SITE-PACKAGES DIRECTORY
     if 'win' in my_os:
@@ -963,7 +971,7 @@ def ping(server, count=1):
     # INITIALISE
     status = 1
     # GET OS
-    my_os = _get_os()
+    my_os = get_os()
 
     # TEST PLATFORM
     if 'win' in my_os:
@@ -1151,13 +1159,14 @@ def unidecode(string):
     > s = u.unidecode(string)
     """
 
-    from unidecode import unidecode
+    # RENAME unidecode TO AVOID CONFLICT WITH utils.unidecode FUNCTION
+    from unidecode import unidecode as uni
 
     # INITIALISE VARIABLE
     decoded = None
 
     # TEST PASSED VALUE AS BEING UNICODE > STORE DECODED (OR ORIGINAL) VALUE
-    decoded = unidecode(string) if isinstance(string, unicode) else string
+    decoded = uni(string) if isinstance(string, unicode) else string
 
     # RETURN VALUE
     return decoded
@@ -1351,7 +1360,7 @@ def _dbconn_params(dbtype, **params):
 
     try:
         # LOOP THROUGH KEYS AND GET MISSING VALUES
-        for key, value in params.items():
+        for key, _ in params.items():
             # TEST VALUE
             if params[key] is None:
                 # PROMPT USER FOR VALUE
@@ -1388,15 +1397,6 @@ def _convert_to_colorscale(cmap):
     import numpy as np
 
     return [i for i in zip(np.linspace(0, 1, num=len(cmap)), cmap)]
-
-
-# ----------------------------------------------------------------------
-def _get_os():
-    """Return the platform's OS."""
-
-    import platform
-
-    return platform.system().lower()
 
 
 # ----------------------------------------------------------------------
