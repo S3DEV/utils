@@ -105,7 +105,7 @@ Date        Programmer      Version     Update
                                         program.
 14.02.18    J. Berendt      0.4.1       Added clarity to the PrintBanner docstring.
                                         Addresses pylint 'unused variable' in for loops.
-                                        BUG05: The user_interface_config file could not be found.
+                                        BUG06: The user_interface_config file could not be found.
                                         FIX06: This was due to passing an implicit file path to
                                         config.loadconfig().  Updated to explicitly declare the
                                         path.  pylint (10/10)
