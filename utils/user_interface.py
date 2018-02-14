@@ -106,12 +106,12 @@ Date        Programmer      Version     Update
 14.02.18    J. Berendt      0.4.1       Added clarity to the PrintBanner docstring.
                                         Addresses pylint 'unused variable' in for loops.
                                         BUG05: The user_interface_config file could not be found.
-                                        FIX06: This was due to passing an implicit file path to
+                                        FIX05: This was due to passing an implicit file path to
                                         config.loadconfig().  Updated to explicitly declare the
                                         path.  pylint (10/10)
-14.02.18    J. Berendt      0.4.2       BUG07: 'ImportError: cannot import name windll' when
+14.02.18    J. Berendt      0.4.2       BUG06: 'ImportError: cannot import name windll' when
                                         installing package on Linux.
-                                        FIX07: Wrapped the 'from ctypes import windll' import
+                                        FIX06: Wrapped the 'from ctypes import windll' import
                                         statement in an OS test.  pylint (10/10)
 ------------------------------------------------------------------------------------------------"""
 
