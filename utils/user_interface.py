@@ -3,26 +3,26 @@ Program:    user_interface.py
 
 Security:   NONE
 
-Purpose:    This module provides an interface to the Win / Linux Command Line Interpreter (CLI).
+Purpose:    This module provides an interface to the Win / Linux Command Line Interpreters (CLI).
             It contains a UserInterface class whose methods provide a standard way of getting data
             and reporting normal, alternative and abnormal behaviour. The following formats are
             provided:
-                - fully customisable messages and headers via the print_() method
-                - heading
-                  black text, cyan background
-                  black text, green background
-                  black text, white background
-                  black text, yellow background
-                - user input expected
-                  white text, black backgroud
-                - normal behaviour
-                  green text, black background
-                - alternative behaviour (e.g. a warning)
-                  yellow text, black background
-                - abnormal or erroneous behaviour
-                  red text, black background
+            - fully customisable messages and headers via the print_() method
+            - heading
+              black text, cyan background
+              black text, green background
+              black text, white background
+              black text, yellow background
+            - user input expected
+              white text, black backgroud
+            - normal behaviour
+              green text, black background
+            - alternative behaviour (e.g. a warning)
+              yellow text, black background
+            - abnormal or erroneous behaviour
+              red text, black background
 
-Developer:  M. Critchard
+Developer:  M. Critchard, J. Berendt
 
 Email:      mark.critchard@rolls-royce.com
             jeremy.berendt@rolls-royce.com
@@ -103,6 +103,12 @@ Date        Programmer      Version     Update
 12.02.18    J. Berendt      0.4.0       Added the PrintBanner() class which is used to print a
                                         program information banner to the CLI at the start of a
                                         program.
+14.02.18    J. Berendt      0.4.1       Added clarity to the PrintBanner docstring.
+                                        Addresses pylint 'unused variable' in for loops.
+                                        BUG05: The user_interface_config file could not be found.
+                                        FIX06: This was due to passing an implicit file path to
+                                        config.loadconfig().  Updated to explicitly declare the
+                                        path.  pylint (10/10)
 ------------------------------------------------------------------------------------------------"""
 
 import os
@@ -316,12 +322,12 @@ class UserInterface(object):
         if v_pad > 0:
             # ADD BLANK LINE ABOVE BANNER
             print ''
-            for i in range(v_pad):
+            for _ in range(v_pad):
                 # PRINT UPPER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
             # PRINT MESSAGE & ADD SPACE BEFORE TEXT TO BRING OFF CONSOLE WALL
             print('%s%s%s %s%s' % (_fore, _back, _style, text, Style.RESET_ALL))
-            for i in range(v_pad):
+            for _ in range(v_pad):
                 # PRINT LOWER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
             # ADD BLANK LINE BELOW BANNER
@@ -446,7 +452,7 @@ class UserInterface(object):
     @staticmethod
     def print_blank_lines(quantity=1):
         """Print (n) blank lines."""
-        for i in range(quantity): print('')
+        for _ in range(quantity): print('')
 
     # ------------------------------------------------------------------
     @staticmethod
@@ -586,7 +592,8 @@ class PrintBanner(object):
 
         CONFIG PARAMETERS:
         - chars
-        How long the ribbon will be, in characters.
+        In the number of characters, the size of the buffer used for
+        the background colour, and the length of the ribbon.
         - ribbon
         The character(s) to use for the ribbon.
         If multiple characters are passed into this parameter, these
@@ -620,6 +627,10 @@ class PrintBanner(object):
         ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
         """
 
+        # SET LOCATION OF THE UI CONFIG FILE EXPLICITLY
+        conf_file = os.path.join(os.path.realpath(os.path.dirname(__file__)),
+                                 'user_interface_config.json')
+
         # INITIALISE
         self._name      = name
         self._version   = version
@@ -635,7 +646,7 @@ class PrintBanner(object):
         self._spaces    = ' '*4
         self._pad       = 15
         self._adtl      = 4
-        self._cfg       = config.loadconfig('user_interface_config.json')
+        self._cfg       = config.loadconfig(conf_file)
         self._ui        = UserInterface()
 
         # PRINT PROGRAM INFO BANNER
