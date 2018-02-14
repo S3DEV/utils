@@ -1,14 +1,14 @@
 
-# utils_6.1.2
+# utils v6.1.3
 ---
-The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
+The **utils** package is a centralised library of commonly used utilities.  These utilities include database connection classes, colourmaps, config file (JSON) loading, program event logging, error reporting, console user interface, etc.
 
 Change log information is included in each module's header.
 
 
 ## PACKAGE CONFIGURATION
 ---
-With package version 6, the `database` class module has been added which features database class access to MySQL, Oracle, SQLite and SQL Server databases.
+Verion 6 of the utils package features the addition of the `database` class module, which includes intuitive database access wrappers for MySQL, Oracle, SQLite and SQL Server databases.
 
 Outlined below is the current package configuration, with classes listed in **bold**.
 
@@ -68,7 +68,7 @@ Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-sudo pip install git+https://github.com/s3dev/utils_x.x.x/
+sudo pip install git+https://github.com/s3dev/utils
 ```
 
 - **Local / Remote Git Repo**
@@ -83,12 +83,12 @@ sudo pip install .
 ```
 
 
-### WINDOWS INSTALLATION
+### WINDOWS
 Any of the following options will get you there ...
 
 - **GitHub**
 ```bash
-pip install git+https://github.com/s3dev/utils_x.x.x/
+pip install git+https://github.com/s3dev/utils
 ```
 
 - **Local / Remote Git Repo**
@@ -104,11 +104,11 @@ pip install .
 
 
 ### UPGRADING A CURRENT INSTALLATION
-To upgrade a current installation to the latest version, use an install command as listed above, and append the `--upgrade` argument to the command.  
+To upgrade a current installation, use an install command as listed above, and append the `--upgrade` argument to the command.  
 For example:
 
 ```bash
-sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --upgrade
+sudo pip install git+https://github.com/s3dev/utils --upgrade
 ```
 
 
@@ -146,8 +146,8 @@ help(ui)
 
 ## TROUBLESHOOTING
 ---
-If the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This argument will ignore the dependencies, and allow you to install each dependency yourself, *if* you require it.  
+If you are installing from a local repo and do not have internet access, or the Linux (or Windows) installation is giving you trouble with **cx_Oracle**, use the `--no-deps` argument for **pip**.  This argument will ignore the dependencies (and not try to access the internet), and allow you to install each dependency yourself, *if* you require it.  
 
 ```bash
-sudo pip install git+https://github.com/s3dev/utils_x.x.x/ --no-deps
+sudo pip install git+https://github.com/s3dev/utils --no-deps
 ```
