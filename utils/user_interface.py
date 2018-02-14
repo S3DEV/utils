@@ -109,18 +109,26 @@ Date        Programmer      Version     Update
                                         FIX06: This was due to passing an implicit file path to
                                         config.loadconfig().  Updated to explicitly declare the
                                         path.  pylint (10/10)
+14.02.18    J. Berendt      0.4.2       BUG07: 'ImportError: cannot import name windll' when
+                                        installing package on Linux.
+                                        FIX07: Wrapped the 'from ctypes import windll' import
+                                        statement in an OS test.  pylint (10/10)
 ------------------------------------------------------------------------------------------------"""
 
 import os
 import inspect
 import platform
 import time
-from ctypes import windll
 
 import config
 import reporterror
 from colorama import init as colourinit
 from colorama import Fore, Back, Style
+
+# TEST OS BEFORE IMPORTING CTYPES
+if 'win' in platform.system().lower():
+    from ctypes import windll
+
 
 class UserInterface(object):
     """
