@@ -38,6 +38,7 @@ Date        Programmer      Version     Update
                                         Updated to re-include README and LICENCE files in install.
 20.12.17    J. Berendt      0.2.1       Updated to use new get_datafile() function, which pulls
                                         README and LICENSE files properly.
+14.02.18    J. Berendt      0.2.2       Removed the x.x.x version place holder from the URL entry.
 ------------------------------------------------------------------------------------------------'''
 
 import os
@@ -54,7 +55,7 @@ PLATFORMS       = 'Python 2.7'
 DESC            = 'Bespoke general utilities package for Python 2.7.'
 AUTHOR          = 'J. Berendt'
 AUTHOR_EMAIL    = 'support@73rdstreetdevelopment.co.uk'
-URL             = 'https://github.com/s3dev/utils_x.x.x'
+URL             = 'https://github.com/s3dev/utils'
 LICENSE         = 'MIT'
 PACKAGE_ROOT    = os.path.join(os.path.realpath(os.path.dirname(__file__)), PACKAGE)
 SITE_PKGS       = os.path.join(getsitepackages(), PACKAGE)
