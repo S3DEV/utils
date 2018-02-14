@@ -1,5 +1,5 @@
 
-# utils_6.0.0
+# utils_6.1.1
 ---
 The **utils** package is a centralised location for commonly used utilities; such as database connections, colourmaps, JSON (config file) loading, program event logging, error reporting, console user interface, etc.
 
@@ -32,12 +32,13 @@ Outlined below is the current package configuration, with classes listed in **bo
           + update_progress()
    + registry
       + **Registry()**
-         + various registry access methods and functions
+         + various Win registry access methods and functions
    + reporterror
       + reporterror()
-   + user_interface()
+   + user_interface
       + **UserInterface()**
-         + various console and error printing methods
+         + various console output and error printing methods
+      + **PrintBanner()**
    + utils
       + clean_df()
       + dbconn_mysql()
@@ -47,6 +48,7 @@ Outlined below is the current package configuration, with classes listed in **bo
       + direxists()
       + fileexists()
       + format_exif_date()
+      + get_os()
       + getcolormap()
       + getdrivername()
       + getsitepackages()
