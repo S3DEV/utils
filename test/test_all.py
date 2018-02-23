@@ -22,6 +22,8 @@ Date        Programmer      Version     Update
 07.06.07    J. Berendt      0.0.2       Added file path validation for
                                         testlist file.
                                         Added try/except block to main()
+23.02.18    M. Critchard    0.0.3       Changed print statements for
+                                        compatibility with Python 3.
 ---------------------------------------------------------------------'''
 
 import os
@@ -31,7 +33,7 @@ import os
 def runit(module):
 
     #NOTIFICATION
-    print '\nRUNNING TEST(S) FOR: %s' % (module)
+    print('\nRUNNING TEST(S) FOR: %s' % (module))
     #DO IT!
     os.system('python %s' % module)
 
@@ -55,11 +57,11 @@ def main():
 
         else:
             #NOTIFICATION
-            print 'ERR: The %s file cannot be found.' % testlist
+            print('ERR: The %s file cannot be found.' % testlist)
 
     except Exception as err:
             #NOTIFICATION
-        print 'ERR: %s' % err
+        print('ERR: %s' % err)
 
 
 #RUN PROGRAM

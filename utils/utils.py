@@ -154,6 +154,7 @@ Date        Programmer      Version     Update
                                         Cleaned various docstrings.
                                         Cleaned TODO list.
                                         Addressed minor pylint messages.  pylint (10/10)
+23.02.18    M. Critchard    4.5.1       Changed print statements for compatibility with Python 3.
 ------------------------------------------------------------------------------------------------"""
 
 # AS THIS IS A UTILITIES PACKAGE, NOT ALL IMPORTS ARE USED DURING
@@ -618,7 +619,7 @@ def fileexists(filepath):
         found = True
     else:
         # NOTIFY USER
-        print 'the requested file cannot be found: (%s)\n' % filepath
+        print('the requested file cannot be found: (%s)\n' % filepath)
         # SET FLAG
         found = False
 
@@ -936,7 +937,7 @@ def listcolormaps():
 
     from matplotlib.pyplot import colormaps
 
-    print colormaps()
+    print(colormaps())
 
 
 # ----------------------------------------------------------------------
@@ -1130,7 +1131,7 @@ def testimport(module_name):
     except ImportError:
         # MODULE NOT FOUND
         found = False
-        print '\nSorry ... the (%s) library/module is not installed.' % (module_name)
+        print('\nSorry ... the (%s) library/module is not installed.' % (module_name))
 
     return found
 
@@ -1507,4 +1508,4 @@ def _prev_plotly(cmap, cmap_name, out_file='c:/temp/cmap_graph.html'):
 def __test():
     """Print a test statement.  Used for testing only."""
 
-    print 'This is only a test.'
+    print('This is only a test.')

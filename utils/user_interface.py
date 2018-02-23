@@ -113,6 +113,7 @@ Date        Programmer      Version     Update
                                         installing package on Linux.
                                         FIX07: Wrapped the 'from ctypes import windll' import
                                         statement in an OS test.  pylint (10/10)
+23.02.18    M. Critchard    0.4.3       Changed print statements for compatibility with Python 3.
 ------------------------------------------------------------------------------------------------"""
 
 import os
@@ -329,7 +330,7 @@ class UserInterface(object):
         # TEST FOR UPPER AND LOWER PADDING
         if v_pad > 0:
             # ADD BLANK LINE ABOVE BANNER
-            print ''
+            print('')
             for _ in range(v_pad):
                 # PRINT UPPER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
@@ -339,7 +340,7 @@ class UserInterface(object):
                 # PRINT LOWER PAD (N) TIMES
                 print('%s%s%s %s%s' % (_fore, _back, _style, spaces, Style.RESET_ALL))
             # ADD BLANK LINE BELOW BANNER
-            print ''
+            print('')
             # UPDATE SLEEP TIMER FOR BANNER IF SLEEP=0
             sleep = self._cfg['v_pad_sleep'] if sleep == 0 else sleep
         else:

@@ -39,6 +39,7 @@ Date        Programmer      Version     Update
                                         Changed block comments to add a space after '#' (PEP 8).
                                         Moved the summary block comment from above each
                                         method/function into the docstring.  pylint (10/10)
+23.02.18    M. Critchard    0.0.5       Changed print statements for compatibility with Python 3.
 ------------------------------------------------------------------------------------------------"""
 
 
@@ -78,12 +79,12 @@ def reporterror(error, logevent=False,
     filename, line_num, func_name, text = traceback.extract_tb(exc_tb)[-1]
 
     # USER NOTIFICATION
-    print ''
-    print 'ERROR:\t%s'  % error
-    print 'TYPE:\t%s'   % exc_type
-    print 'FUNC:\t%s'   % func_name
-    print 'LINE:\t%s'   % line_num
-    print 'CMD:\t%s'    % text
+    print('')
+    print('ERROR:\t%s'  % error)
+    print('TYPE:\t%s'   % exc_type)
+    print('FUNC:\t%s'   % func_name)
+    print('LINE:\t%s'   % line_num)
+    print('CMD:\t%s'    % text)
 
     # LOG ERROR
     if logevent:
