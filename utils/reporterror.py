@@ -74,7 +74,7 @@ def reporterror(error, logevent=False,
 
     import sys
     import traceback
-    import log
+    import utils.log as log
 
     # GET TRACEBACK OBJECTS
     exc_type, exc_obj, exc_tb = sys.exc_info()
