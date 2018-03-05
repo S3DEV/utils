@@ -40,8 +40,10 @@ Date        Programmer      Version     Update
                                         Moved the summary block comment from above each
                                         method/function into the docstring.  pylint (10/10)
 23.02.18    M. Critchard    0.0.5       Changed print statements for compatibility with Python 3.
+05.03.18    J. Berendt      0.0.6       Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 
 # ----------------------------------------------------------------------
 def reporterror(error, logevent=False,

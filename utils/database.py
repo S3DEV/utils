@@ -21,8 +21,10 @@ Date        Programmer      Version     Update
 20.12.17    J. Berendt      0.1.0       Written  pylint (10/10)
 21.12.17                                Added the MySQL() class.
                                         Added the SQLite() class.  pylint (10/10)
+05.03.18    J. Berendt      0.1.1       Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import utils
 import user_interface as ui
 

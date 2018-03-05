@@ -1,4 +1,4 @@
-'''------------------------------------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    setup.py
 Py Ver:     2.7
 Purpose:    Setup packager for utils.
@@ -39,8 +39,10 @@ Date        Programmer      Version     Update
 20.12.17    J. Berendt      0.2.1       Updated to use new get_datafile() function, which pulls
                                         README and LICENSE files properly.
 14.02.18    J. Berendt      0.2.2       Removed the x.x.x version place holder from the URL entry.
-------------------------------------------------------------------------------------------------'''
+05.03.18    J. Berendt      0.2.3       Added __future__ import to support Python 2/3.
+------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import os
 from setuptools import setup, find_packages
 from utils.utils import getsitepackages

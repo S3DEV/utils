@@ -114,15 +114,19 @@ Date        Programmer      Version     Update
                                         FIX07: Wrapped the 'from ctypes import windll' import
                                         statement in an OS test.  pylint (10/10)
 23.02.18    M. Critchard    0.4.3       Changed print statements for compatibility with Python 3.
+05.03.18    J. Berendt      0.4.4       Updated import statements to be explicit, for installation 
+                                        into an Anaconda3 environment.
+                                        Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import os
 import inspect
 import platform
 import time
 
-import config
-import reporterror
+import utils.config as config
+import utils.reporterror as reporterror
 from colorama import init as colourinit
 from colorama import Fore, Back, Style
 

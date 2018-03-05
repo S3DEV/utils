@@ -28,10 +28,16 @@ Date        Programmer      Version     Update
                                         FIX02: Improved functionality for gathering the README
                                         and LICENSE files, and added parameters to get_datafiles()
                                         to either collect, or ignore these files.  pylint (10/10)
+05.03.18    J. Berendt      0.1.1       Py3 updates:
+                                        Updated import statements to be explicit, for installation 
+                                        into an Anaconda3 environment.
+                                        Updated to explicitly convert result.items() to a list
+                                        Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import os
-import utils
+import utils.utils as utils
 
 # ALLOW A LIST AS DEFAULT METHOD PARAMETER
 # pylint: disable=dangerous-default-value
@@ -126,7 +132,7 @@ def get_datafiles(pkg_dir, exts=['.json', '.sql', '.txt'],
         if len(files) > 0: result[root] = files
 
     # CONVERT TO LIST
-    data_files = result.items()
+    data_files = list(result.items())
 
     # TEST FOR README DIRECTIVE
     if get_readme_files:

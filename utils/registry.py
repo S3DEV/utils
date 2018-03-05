@@ -35,8 +35,10 @@ Date        Programmer      Version     Update
                                         utils.user_interface.UserInterface() class.
                                         Updated the user_interface import to:
                                         import user_interface as ui; then instantiate the class.
+05.03.18    J. Berendt      0.0.3       Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import _winreg as wr
 import user_interface as ui
 

@@ -1,9 +1,16 @@
 
-# utils v6.1.3
+# utils v6.1.5
 ---
 The **utils** package is a centralised library of commonly used utilities.  These utilities include database connection classes, colourmaps, config file (JSON) loading, program event logging, error reporting, console user interface, etc.
 
 Change log information is included in each module's header.
+
+
+## DEPRECATION NOTICE
+---
+**Development and updates on the `utils` package will stop in March 2018.**
+
+But this is a good thing!  Development has begun on **`utils3`** which will contain all of the original functionality, and support Python 3.5.
 
 
 ## PACKAGE CONFIGURATION

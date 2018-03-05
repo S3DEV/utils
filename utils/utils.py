@@ -155,14 +155,19 @@ Date        Programmer      Version     Update
                                         Cleaned TODO list.
                                         Addressed minor pylint messages.  pylint (10/10)
 23.02.18    M. Critchard    4.5.1       Changed print statements for compatibility with Python 3.
+05.03.18    J. Berendt      4.5.2       Updated import statements to be explicit, for installation 
+                                        into an Anaconda3 environment.
+                                        Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
+
+from __future__ import absolute_import, print_function
 
 # AS THIS IS A UTILITIES PACKAGE, NOT ALL IMPORTS ARE USED DURING
 # EXECUTION, SO MOST IMPORTS SIT WITH THE METHOD OR FUNCTION IN WHICH
 # THEY ARE USED.
-import config
-import reporterror
-import user_interface
+import utils.config as config
+import utils.reporterror as reporterror
+import utils.user_interface as user_interface
 
 # GLOBAL CONSTANTS / CLASS INSTANTIATIONS
 _UI = user_interface.UserInterface()

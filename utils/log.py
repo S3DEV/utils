@@ -50,14 +50,16 @@ Date        Programmer      Version     Update
                                         pylint (10/10)
 10.10.17    J. Berendt      0.3.0       Updated to remove depreciated methods and functions.
                                         - This update aligns with the utils v5 update.
+05.03.18    J. Berendt      0.3.1       Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import os
 import socket
 import getpass
 from datetime import datetime as dt
 
-import reporterror
+import utils.reporterror as reporterror
 
 
 class Log(object):

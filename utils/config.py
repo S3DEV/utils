@@ -39,8 +39,10 @@ Date        Programmer      Version     Update
                                         Renamed function/method names to replace double leading
                                         underscore with single underscore. pylint (10/10)
 21.12.17    J. Berendt      0.0.5       Updated formatting IAW PEP 8 and PEP 257.  pylint (10/10)
+05.03.18    J. Berendt      0.0.6       Added __future__ import to support Python 2/3.
 ------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import os
 import sys
 import json

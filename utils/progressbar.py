@@ -1,32 +1,30 @@
-"""---------------------------------------------------------------------
+"""------------------------------------------------------------------------------------------------
 Program:    progressbar
 Py Ver:     2.7
-Purpose:    This is a class which provides access to a simple console
-            progress bar.
+Purpose:    This is a class which provides access to a simple console progress bar.
 
 Dependents: sys
 
 Developer:  J. Berendt
 Email:      support@73rdstreetdevelopment.co.uk
 
-Comments:   This class is to be incorporated into the utils package
-            later.
+Comments:   This class is to be incorporated into the utils package later.
 
 Use:        Refer to USE section of the docstring.
 
-------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 UPDATE LOG:
 Date        Programmer      Version     Update
 16.05.17    J. Berendt      0.0.1       Written
-31.05.17    J. Berendt      0.0.2       Converted into a class for use
-                                        with the utils package.
-01.06.17    J. Berendt      0.0.3       Added a user defined color
-                                        option.
+31.05.17    J. Berendt      0.0.2       Converted into a class for use with the utils package.
+01.06.17    J. Berendt      0.0.3       Added a user defined color option.
 05.06.17    J. Berendt      0.0.4       Moved version to external file.
                                         Added into utils package.
-21.12.17    J. Berendt      0.0.5       Updated formatting IAW PEP 8.
----------------------------------------------------------------------"""
+21.12.17    J. Berendt      0.0.5       Updated formatting IAW PEP8 / PEP257.
+05.03.18    J. Berendt      0.0.6       Added __future__ import to support Python 2/3.
+------------------------------------------------------------------------------------------------"""
 
+from __future__ import absolute_import, print_function
 import sys
 import colorama
 
