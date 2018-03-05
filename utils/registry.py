@@ -40,7 +40,7 @@ Date        Programmer      Version     Update
 
 from __future__ import absolute_import, print_function
 import _winreg as wr
-import user_interface as ui
+import utils.user_interface as ui
 
 # IGNORE
 # pylint: disable=too-few-public-methods
